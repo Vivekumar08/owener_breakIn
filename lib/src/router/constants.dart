@@ -19,8 +19,7 @@ const String manualLocation = '/manualLocation';
 const String home = '/home';
 
 // Pages Route
-const String canteen = '$home/canteen';
-const String menu = '$canteen/menu';
+const String menu = '$home/menu';
 const String rate = '$menu/rate';
 
 // Settings Route

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../models/menu.dart';
 import '../style/fonts.dart';
@@ -82,8 +83,24 @@ class _AccordionBody extends StatelessWidget {
     return ListTile(
       title: Text(menuItem.item,
           style: Fonts.textButton.copyWith(color: Palette.text, height: 1.11)),
-      subtitle: Text(menuItem.itemDetails,
-          style: Fonts.simTextBlack.copyWith(letterSpacing: 0)),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(menuItem.itemDetails,
+              style: Fonts.simTextBlack.copyWith(letterSpacing: 0)),
+          const SizedBox(height: 8.0),
+          Row(
+            children: [
+              Text('Edit Item',
+                  style: Fonts.simTextBlack.copyWith(color: Palette.link)),
+              const SizedBox(width: 16.0),
+              Text('Delete Item',
+                  style: Fonts.simTextBlack.copyWith(color: Palette.primary))
+            ],
+          )
+        ],
+      ),
+      isThreeLine: true,
       leading: menuItem.isVeg
           ? Stack(
               alignment: Alignment.center,
@@ -99,13 +116,25 @@ class _AccordionBody extends StatelessWidget {
                 Icon(Icons.circle, color: Colors.red, size: 14),
               ],
             ),
-      trailing: Text('Rs. ${menuItem.price}',
-          style: Fonts.otpText.copyWith(fontSize: 16.0)),
+      trailing: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Rs. ${menuItem.price}',
+              style: Fonts.otpText.copyWith(fontSize: 16.0)),
+          SizedBox(
+            height: 20.0,
+            child: FittedBox(
+                fit: BoxFit.cover,
+                child: CupertinoSwitch(value: true, onChanged: (value) {})),
+          ),
+        ],
+      ),
       horizontalTitleGap: 0,
       contentPadding: EdgeInsets.zero,
       shape: UnderlineInputBorder(
         borderSide: BorderSide(color: Colors.black.withOpacity(0.24)),
       ),
+      visualDensity: const VisualDensity(horizontal: 0, vertical: 2),
       dense: true,
     );
   }

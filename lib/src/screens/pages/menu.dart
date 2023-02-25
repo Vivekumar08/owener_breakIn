@@ -3,20 +3,11 @@ import 'package:flutter/material.dart';
 import '../../components/accordion.dart';
 import '../../models/example.dart';
 import '../../models/menu.dart';
-import '../../screens/pages/rate.dart';
 import '../../style/fonts.dart';
 import '../../style/message_dialog.dart';
 import '../../style/palette.dart';
 import '../../utils/images.dart';
 import '../../utils/symbols.dart';
-
-List<String> _menu = [
-  'Thali (1)',
-  'Lunch (1)',
-  'Chienese (1)',
-  'South Indian (1)',
-  'Sweets (5)'
-];
 
 class Menu extends StatelessWidget {
   const Menu({super.key});
@@ -35,9 +26,8 @@ class Menu extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Palette.iconsCol,
-        child: Padding(
-            padding: const EdgeInsets.all(14.0), child: Symbols.menuBig),
-        onPressed: () => showMenuDialog(context: context, children: _menu),
+        child: const Icon(Icons.add, size: 32.0),
+        onPressed: () {},
       ),
       body: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
@@ -50,45 +40,24 @@ class Menu extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const SizedBox(height: 16.0),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Symbols.star,
                       const SizedBox(width: 7.0),
                       Text('4.1',
                           style: Fonts.simTextBlack.copyWith(fontSize: 16.0)),
                       const Spacer(),
-                      // const Icon(Icons.favorite_outline),
-                      // const SizedBox(width: 20.0),
                       const Icon(Icons.share_outlined),
-                      const SizedBox(width: 20.0),
-                      IconButton(
-                          onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Rate())),
-                          icon: Symbols.rate),
                     ],
                   ),
+                  const SizedBox(height: 16.0),
                   Text('The Burger Club',
                       style: Fonts.otpText.copyWith(fontSize: 16.0)),
                   const SizedBox(height: 4.0),
                   Text('Sector 7, Rohini (15 KM)', style: Fonts.simTextBlack),
-                  const SizedBox(height: 12.0),
-                  Row(
-                    children: [
-                      const Icon(Icons.watch_later_outlined, size: 16.0),
-                      const SizedBox(width: 6.33),
-                      Text('25 Minutes  ',
-                          style: Fonts.appBarTitle.copyWith(fontSize: 12.0)),
-                      const Spacer(),
-                      Text('Get Directions',
-                          style:
-                              Fonts.textButton.copyWith(color: Palette.link)),
-                      Icon(Icons.arrow_forward,
-                          size: 12.0, color: Palette.link),
-                    ],
-                  ),
-                  const SizedBox(height: 26.0),
+                  const SizedBox(height: 16.0),
                   Row(
                     children: [
                       Text('Menu',

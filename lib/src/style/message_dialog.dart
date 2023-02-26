@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../style/fonts.dart';
-import '../style/palette.dart';
 
 Future<void> showMessageDialog(
         {required BuildContext context,

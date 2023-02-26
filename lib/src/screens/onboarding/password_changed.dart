@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../components/button.dart';
 import '../../style/fonts.dart';
+import '../../utils/images.dart';
 
 class PasswordChanged extends StatelessWidget {
   const PasswordChanged({super.key});
@@ -13,6 +14,7 @@ class PasswordChanged extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Images.success,
           Padding(
             padding: const EdgeInsets.only(top: 35.0),
             child: Text("Password Changed", style: Fonts.heading),

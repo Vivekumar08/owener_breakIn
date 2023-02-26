@@ -13,6 +13,8 @@ import '../screens/onboarding/register_with_mail.dart';
 import '../screens/onboarding/register_with_otp.dart';
 import '../screens/onboarding/register_with_phone.dart';
 import '../screens/pages/menu.dart';
+import '../screens/pages/add_new.dart';
+import '../screens/pages/modify_item.dart';
 import '../screens/settings/detect_new_location.dart';
 import '../screens/settings/feedback.dart';
 import '../screens/settings/help_about.dart';
@@ -25,7 +27,7 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: home,
+  initialLocation: menu,
   routes: [
     GoRoute(
       path: '/',
@@ -94,9 +96,23 @@ final router = GoRouter(
           FadeTransitionPage(key: state.pageKey, child: const Home()),
       routes: [
         GoRoute(
-          path: 'menu',
-          builder: (context, state) => const Menu(),
-        ),
+            path: 'menu',
+            builder: (context, state) => const Menu(),
+            routes: [
+              GoRoute(
+                path: 'modifyItem',
+                builder: (context, state) => const ModifyItem(),
+              ),
+              GoRoute(
+                  path: 'addNewItem',
+                  builder: (context, state) => const AddNewItem(),
+                  routes: [
+                    GoRoute(
+                      path: 'addNewCategory',
+                      builder: (context, state) => const AddNewCategory(),
+                    ),
+                  ]),
+            ]),
 
         // Settings
         GoRoute(

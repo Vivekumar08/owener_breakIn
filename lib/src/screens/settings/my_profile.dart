@@ -68,7 +68,7 @@ class MyProfile extends StatelessWidget {
                 ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Button(onPressed: () {}, buttonText: 'Save Changes')
           ],
         ),

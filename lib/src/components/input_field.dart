@@ -47,6 +47,7 @@ class InputField extends StatelessWidget {
             height: height,
             child: TextField(
               controller: controller,
+              style: Fonts.inputText.copyWith(color: Palette.text),
               textAlignVertical: TextAlignVertical.top,
               expands: expands,
               maxLines: expands ? null : 1,
@@ -109,6 +110,7 @@ class SearchField extends StatelessWidget {
             border: Border.all(width: 1, color: Palette.stroke)),
         child: TextField(
           textAlignVertical: TextAlignVertical.center,
+          style: Fonts.inputText.copyWith(color: Palette.text),
           readOnly: readOnly,
           controller: controller,
           decoration: InputDecoration(
@@ -282,6 +284,7 @@ class _PasswordFieldState extends State<PasswordField> {
           padding: const EdgeInsets.only(top: 4.0),
           child: TextField(
             controller: widget.controller,
+            style: Fonts.inputText.copyWith(color: Palette.text),
             obscureText: isObscure,
             textAlignVertical: TextAlignVertical.top,
             decoration: InputDecoration(
@@ -354,4 +357,70 @@ class _LinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_LinePainter oldDelegate) => false;
+}
+
+class Dropdown extends StatefulWidget {
+  const Dropdown(
+      {super.key,
+      required this.inputText,
+      required this.items,
+      required this.controller});
+
+  final String inputText;
+  final List<String> items;
+  final TextEditingController controller;
+
+  @override
+  State<Dropdown> createState() => _DropdownState();
+}
+
+class _DropdownState extends State<Dropdown> {
+  @override
+  Widget build(BuildContext context) {
+    String dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
+    widget.controller.text = dropdownValue;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: Text(widget.inputText, style: Fonts.inputText),
+        ),
+        const SizedBox(height: 4.0),
+        DropdownButtonFormField<String>(
+          value: dropdownValue,
+          style: Fonts.inputText.copyWith(color: Palette.text),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Palette.inputField,
+            border: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                borderSide: BorderSide(width: 1, color: Palette.stroke)),
+            enabledBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                borderSide: BorderSide(width: 1, color: Palette.stroke)),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+                borderSide: BorderSide(width: 1, color: Palette.stroke)),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+          ),
+          icon: const Icon(Icons.keyboard_arrow_down_outlined),
+          borderRadius: BorderRadius.circular(8.0),
+          onChanged: (String? value) {
+            setState(() {
+              dropdownValue = value!;
+              widget.controller.text = dropdownValue;
+            });
+          },
+          items: widget.items.map<DropdownMenuItem<String>>((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
 }

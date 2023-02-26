@@ -20,7 +20,9 @@ const String home = '/home';
 
 // Pages Route
 const String menu = '$home/menu';
-const String rate = '$menu/rate';
+const String modifyItem = '$menu/modifyItem';
+const String addNewItem = '$menu/addNewItem';
+const String addNewCategory = '$addNewItem/addNewCategory';
 
 // Settings Route
 const String profile = '$home/profile';

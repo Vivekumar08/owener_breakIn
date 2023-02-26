@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-double getTextSize(String text, TextStyle style) {
+double getTextSize(String text, {TextStyle? style}) {
   final TextPainter textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
       maxLines: 1,

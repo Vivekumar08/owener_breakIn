@@ -13,6 +13,11 @@ final ThemeData theme = ThemeData(
     centerTitle: true,
     actionsIconTheme: IconThemeData(color: Palette.text, size: 24.0),
   ),
+  popupMenuTheme: PopupMenuThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      color: Palette.stroke,
+      textStyle: Fonts.simText.copyWith(fontSize: 10.0, color: Colors.black),
+      position: PopupMenuPosition.under),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: Palette.text,
     selectedLabelStyle:

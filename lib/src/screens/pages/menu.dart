@@ -24,6 +24,19 @@ class Menu extends StatelessWidget {
         leadingWidth: 72.0,
         title: Text("The Burger Club",
             style: Fonts.appBarTitle.copyWith(color: Palette.white)),
+        actions: [
+          PopupMenuButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(Icons.more_vert_outlined, color: Palette.white),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+              PopupMenuItem(
+                height: 40.0,
+                onTap: () => context.go(coverImage),
+                child: const Text('Change Cover Image'),
+              ),
+            ],
+          )
+        ],
       ),
       body: Scaffold(
         floatingActionButton: FloatingActionButton(

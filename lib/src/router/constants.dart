@@ -20,6 +20,7 @@ const String home = '/home';
 
 // Pages Route
 const String menu = '$home/menu';
+const String coverImage = '$menu/coverImage';
 const String modifyItem = '$menu/modifyItem';
 const String addNewItem = '$menu/addNewItem';
 const String addNewCategory = '$addNewItem/addNewCategory';

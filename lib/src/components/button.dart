@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../style/fonts.dart';
 import '../style/palette.dart';
+import '../utils/symbols.dart';
 
 class Button extends StatelessWidget {
   const Button(
@@ -94,6 +95,42 @@ class ChevBackButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0),
         ),
         child: Icon(Icons.chevron_left, size: 32.0, color: Palette.primary),
+      ),
+    );
+  }
+}
+
+class UploadButton extends StatelessWidget {
+  const UploadButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 80.0,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Palette.stroke,
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(flex: 2, child: Symbols.upload),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                text: 'Drag & Drop files or Upload ',
+                style: Fonts.hintText.copyWith(color: Palette.text),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'here',
+                    style: Fonts.hintText.copyWith(color: Palette.link),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

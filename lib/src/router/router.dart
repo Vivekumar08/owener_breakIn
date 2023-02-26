@@ -13,6 +13,7 @@ import '../screens/onboarding/password_changed.dart';
 import '../screens/onboarding/register_with_mail.dart';
 import '../screens/onboarding/register_with_otp.dart';
 import '../screens/onboarding/register_with_phone.dart';
+import '../screens/pages/cover_image.dart';
 import '../screens/pages/menu.dart';
 import '../screens/pages/add_new.dart';
 import '../screens/pages/modify_item.dart';
@@ -28,7 +29,7 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: menu,
+  initialLocation: coverImage,
   routes: [
     GoRoute(
       path: '/',
@@ -101,13 +102,22 @@ final router = GoRouter(
           builder: (context, state) => const Menu(),
           routes: [
             GoRoute(
+              path: 'coverImage',
+              builder: (context, state) => const CoverImage(),
+            ),
+
+            // Modify Item takes a MenuItem object & menuCategory String
+            // to create Modify Item Page
+            GoRoute(
               path: 'modifyItem/:category',
               builder: (context, state) {
+                assert(state.extra is MenuItem);
                 MenuItem menuItem = state.extra as MenuItem;
                 return ModifyItem(
                     menuItem: menuItem, menuCategory: state.params['category']);
               },
             ),
+
             GoRoute(
               path: 'addNewItem',
               builder: (context, state) => const AddNewItem(),

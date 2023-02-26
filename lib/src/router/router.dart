@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import '../models/menu.dart';
 import '../screens/home/home.dart';
 import '../screens/location/detected_location.dart';
 import '../screens/onboarding/forgot_passwd.dart';
@@ -96,23 +97,29 @@ final router = GoRouter(
           FadeTransitionPage(key: state.pageKey, child: const Home()),
       routes: [
         GoRoute(
-            path: 'menu',
-            builder: (context, state) => const Menu(),
-            routes: [
-              GoRoute(
-                path: 'modifyItem',
-                builder: (context, state) => const ModifyItem(),
-              ),
-              GoRoute(
-                  path: 'addNewItem',
-                  builder: (context, state) => const AddNewItem(),
-                  routes: [
-                    GoRoute(
-                      path: 'addNewCategory',
-                      builder: (context, state) => const AddNewCategory(),
-                    ),
-                  ]),
-            ]),
+          path: 'menu',
+          builder: (context, state) => const Menu(),
+          routes: [
+            GoRoute(
+              path: 'modifyItem/:category',
+              builder: (context, state) {
+                MenuItem menuItem = state.extra as MenuItem;
+                return ModifyItem(
+                    menuItem: menuItem, menuCategory: state.params['category']);
+              },
+            ),
+            GoRoute(
+              path: 'addNewItem',
+              builder: (context, state) => const AddNewItem(),
+              routes: [
+                GoRoute(
+                  path: 'addNewCategory',
+                  builder: (context, state) => const AddNewCategory(),
+                ),
+              ],
+            ),
+          ],
+        ),
 
         // Settings
         GoRoute(

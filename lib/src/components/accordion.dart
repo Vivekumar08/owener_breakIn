@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../models/menu.dart';
+import '../router/constants.dart';
 import '../style/fonts.dart';
 import '../style/palette.dart';
 
@@ -30,7 +32,8 @@ class _AccordionState extends State<Accordion> {
             ? Column(
                 children: [
                   for (MenuItem item in widget.menu.menuItems)
-                    _AccordionBody(menuItem: item)
+                    _AccordionBody(
+                        menuItem: item, menuCategory: widget.menu.menuCategory)
                 ],
               )
             : Container()
@@ -74,9 +77,12 @@ class _AccordionHeader extends StatelessWidget {
 }
 
 class _AccordionBody extends StatelessWidget {
-  const _AccordionBody({Key? key, required this.menuItem}) : super(key: key);
+  const _AccordionBody(
+      {Key? key, required this.menuItem, required this.menuCategory})
+      : super(key: key);
 
   final MenuItem menuItem;
+  final String menuCategory;
 
   @override
   Widget build(BuildContext context) {
@@ -91,8 +97,13 @@ class _AccordionBody extends StatelessWidget {
           const SizedBox(height: 8.0),
           Row(
             children: [
-              Text('Edit Item',
-                  style: Fonts.simTextBlack.copyWith(color: Palette.link)),
+              GestureDetector(
+                onTap: () => context.go(
+                    '$modifyItem/${menuCategory.split(' ').first}',
+                    extra: menuItem),
+                child: Text('Edit Item',
+                    style: Fonts.simTextBlack.copyWith(color: Palette.link)),
+              ),
               const SizedBox(width: 16.0),
               Text('Delete Item',
                   style: Fonts.simTextBlack.copyWith(color: Palette.primary))

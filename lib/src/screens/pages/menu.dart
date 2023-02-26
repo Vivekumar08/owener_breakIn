@@ -6,7 +6,6 @@ import '../../models/example.dart';
 import '../../models/menu.dart';
 import '../../router/constants.dart';
 import '../../style/fonts.dart';
-
 import '../../style/palette.dart';
 import '../../utils/images.dart';
 import '../../utils/symbols.dart';

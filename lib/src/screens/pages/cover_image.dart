@@ -4,7 +4,7 @@ import '../../style/fonts.dart';
 import '../../utils/images.dart';
 
 class CoverImageChanger extends ValueNotifier<bool> {
-  ValueNotifier<bool> image = ValueNotifier(false);
+  ValueNotifier<bool> image = ValueNotifier(true);
 
   CoverImageChanger() : super(false);
 

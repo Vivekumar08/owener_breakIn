@@ -46,7 +46,8 @@ class RegisterWithMail extends StatelessWidget {
                 hintText: "Enter your password",
                 controller: confirmPasswd),
             const SizedBox(height: 24.0),
-            Button(onPressed: () => context.go(home), buttonText: "Register"),
+            Button(
+                onPressed: () => context.go(listPlace), buttonText: "Register"),
             AuthOptions(
               emailAuth: false,
               text: "Or Register with",

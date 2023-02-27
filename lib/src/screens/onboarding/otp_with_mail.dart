@@ -20,10 +20,7 @@ class OTPWithMail extends StatelessWidget {
           children: [
             const ChevBackButton(),
             const SizedBox(height: 24.0),
-            Text(
-              "OTP Verification",
-              style: Fonts.heading,
-            ),
+            Text("OTP Verification", style: Fonts.heading),
             const SizedBox(height: 10.0),
             Text.rich(
               TextSpan(

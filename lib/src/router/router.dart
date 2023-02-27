@@ -3,6 +3,7 @@ import '../models/menu.dart';
 import '../screens/home/home.dart';
 import '../screens/location/detected_location.dart';
 import '../screens/onboarding/forgot_passwd.dart';
+import '../screens/onboarding/list_place.dart';
 import '../screens/onboarding/login_with_mail.dart';
 import '../screens/onboarding/login_with_phone.dart';
 import '../screens/onboarding/new_password.dart';
@@ -30,7 +31,7 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: home,
+  initialLocation: loginWithMail,
   routes: [
     GoRoute(
       path: '/',
@@ -90,6 +91,11 @@ final router = GoRouter(
     GoRoute(
       path: '/detectedLocation',
       builder: (context, state) => const DetectedLocation(),
+    ),
+
+    GoRoute(
+      path: '/listPlace',
+      builder: (context, state) => const ListPlace(),
     ),
 
     // Home

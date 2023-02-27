@@ -15,6 +15,9 @@ const String detectingLocation = '/detectingLocation';
 const String detectedLocation = '/detectedLocation';
 const String manualLocation = '/manualLocation';
 
+// List Place
+const String listPlace = '/listPlace';
+
 // Home Route
 const String home = '/home';
 const String insights = '$home/insights';

@@ -13,4 +13,5 @@ class Palette {
   static Color get link => const Color(0xff5D5FEF);
   static Color get otp => const Color(0xff35C2C1);
   static Color get red => const Color(0xFFFF0000);
+  static Color get star => const Color(0xFFECF01E);
 }

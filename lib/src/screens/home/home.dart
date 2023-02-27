@@ -79,7 +79,7 @@ class Home extends StatelessWidget {
               children: [
                 _buildOptions(Images.mMenu, 'Manage Menu', menu, context),
                 _buildOptions(
-                    Images.insights, 'Customer Insights', 'route', context)
+                    Images.insights, 'Customer Insights', insights, context)
               ],
             )
           ],

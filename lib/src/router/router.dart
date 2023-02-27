@@ -14,6 +14,7 @@ import '../screens/onboarding/register_with_mail.dart';
 import '../screens/onboarding/register_with_otp.dart';
 import '../screens/onboarding/register_with_phone.dart';
 import '../screens/pages/cover_image.dart';
+import '../screens/pages/insights.dart';
 import '../screens/pages/menu.dart';
 import '../screens/pages/add_new.dart';
 import '../screens/pages/modify_item.dart';
@@ -29,7 +30,7 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: coverImage,
+  initialLocation: home,
   routes: [
     GoRoute(
       path: '/',
@@ -129,6 +130,12 @@ final router = GoRouter(
               ],
             ),
           ],
+        ),
+
+        // Insights
+        GoRoute(
+          path: 'insights',
+          builder: (context, state) => const Insights(),
         ),
 
         // Settings

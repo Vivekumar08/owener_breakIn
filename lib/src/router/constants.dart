@@ -17,6 +17,7 @@ const String manualLocation = '/manualLocation';
 
 // Home Route
 const String home = '/home';
+const String insights = '$home/insights';
 
 // Pages Route
 const String menu = '$home/menu';

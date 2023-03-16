@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../components/button.dart';
+import '../../components/dropdown.dart';
 import '../../components/input_field.dart';
 import '../../router/constants.dart';
 import '../../style/snack_bar.dart';

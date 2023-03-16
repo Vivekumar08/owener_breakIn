@@ -89,8 +89,8 @@ class OurTeam extends StatelessWidget {
     required String name,
     Image? image,
     required String role,
-    required String linkedin,
-    required String mail,
+    String? linkedin,
+    String? mail,
   }) =>
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -107,11 +107,12 @@ class OurTeam extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                    onTap: () => _launchUrl(linkedin),
+                    onTap: () => linkedin == null ? null : _launchUrl(linkedin),
                     child: Symbols.linkedinIcon),
                 const SizedBox(width: 16.0),
                 GestureDetector(
-                    onTap: () => _launchUrl('mailto:$mail'),
+                    onTap: () =>
+                        mail == null ? null : _launchUrl('mailto:$mail'),
                     child: Symbols.gmailIcon)
               ],
             )
@@ -132,13 +133,15 @@ class OurTeam extends StatelessWidget {
         child: ListView(
           physics: const ClampingScrollPhysics(),
           children: [
-            Center(
-                child: _buildProfile(
-                    name: 'Akshat Jain',
-                    role: 'Ideator',
-                    linkedin:
-                        'https://www.linkedin.com/in/akshat-jain-8053115018/',
-                    mail: 'akshatjain281@gmail.com')),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              _buildProfile(name: 'Pintu', role: 'Main Ideator'),
+              _buildProfile(
+                  name: 'Akshat Jain',
+                  role: 'Ideator',
+                  linkedin:
+                      'https://www.linkedin.com/in/akshat-jain-8053115018/',
+                  mail: 'akshatjain281@gmail.com')
+            ]),
             const SizedBox(height: 24.0),
             Text("Dev", style: Fonts.appBarTitle),
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -160,6 +163,7 @@ class OurTeam extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                _buildProfile(name: 'Ankit', role: 'Advisor'),
                 _buildProfile(
                     name: 'Rohan Babbar',
                     role: 'Advisor',

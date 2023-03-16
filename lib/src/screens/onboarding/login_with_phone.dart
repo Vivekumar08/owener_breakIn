@@ -28,7 +28,7 @@ class LoginWithPhone extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             InputField(
-                inputText: "Phone Number*",
+                inputText: "Phone*",
                 hintText: "Enter your phone number",
                 controller: phone,
                 isPhone: true),

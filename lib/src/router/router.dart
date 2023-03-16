@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/menu.dart';
+import '../providers/providers.dart';
 import '../screens/home/home.dart';
 import '../screens/location/detected_location.dart';
 import '../screens/onboarding/forgot_passwd.dart';
@@ -17,12 +19,11 @@ import '../screens/onboarding/register_with_phone.dart';
 import '../screens/pages/cover_image.dart';
 import '../screens/pages/insights.dart';
 import '../screens/pages/menu.dart';
-import '../screens/pages/add_new.dart';
+import '../screens/pages/add_new_item.dart';
 import '../screens/pages/modify_item.dart';
-import '../screens/settings/detect_new_location.dart';
 import '../screens/settings/feedback.dart';
 import '../screens/settings/help_about.dart';
-import '../screens/settings/my_profile.dart';
+import '../screens/settings/edit_profile.dart';
 import '../screens/settings/profile.dart';
 import '../screens/settings/suggest_place.dart';
 import '../screens/settings/about.dart';
@@ -36,6 +37,14 @@ final router = GoRouter(
     GoRoute(
       path: '/',
       builder: (context, state) => const Onboarding(),
+      redirect: (context, GoRouterState state) async {
+        bool token = await context.read<TokenProvider>().doesTokenExists();
+        if (token) {
+          return home;
+        } else {
+          return null;
+        }
+      },
       routes: [
         GoRoute(
           path: 'loginWithMail',
@@ -151,13 +160,7 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: 'myProfile',
-              builder: (context, state) => const MyProfile(),
-              routes: [
-                GoRoute(
-                  path: 'detectionNewLocation',
-                  builder: (context, state) => const DetectingNewLocation(),
-                )
-              ],
+              builder: (context, state) => const EditProfile(),
             ),
             GoRoute(
               path: 'suggestPlace',

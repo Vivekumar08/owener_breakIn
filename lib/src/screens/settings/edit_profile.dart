@@ -5,16 +5,30 @@ import '../../style/fonts.dart';
 import '../../style/palette.dart';
 import '../../utils/images.dart';
 
-class MyProfile extends StatelessWidget {
-  const MyProfile({super.key});
+class EditProfile extends StatefulWidget {
+  const EditProfile({super.key});
+
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+  TextEditingController name = TextEditingController();
+  TextEditingController phone = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController location = TextEditingController();
+
+  @override
+  void dispose() {
+    name.dispose();
+    phone.dispose();
+    email.dispose();
+    location.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController name = TextEditingController();
-    TextEditingController phone = TextEditingController();
-    TextEditingController email = TextEditingController();
-    TextEditingController location = TextEditingController();
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

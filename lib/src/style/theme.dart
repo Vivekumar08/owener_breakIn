@@ -3,6 +3,10 @@ import 'palette.dart';
 import 'fonts.dart';
 
 final ThemeData theme = ThemeData(
+  // Scaffold Background Color
+  scaffoldBackgroundColor: Palette.white,
+
+  // App Bar Theme
   appBarTheme: AppBarTheme(
     backgroundColor: Palette.white,
     foregroundColor: Palette.text,
@@ -13,11 +17,15 @@ final ThemeData theme = ThemeData(
     centerTitle: true,
     actionsIconTheme: IconThemeData(color: Palette.text, size: 24.0),
   ),
+
+  // Pop-Up Menu Theme
   popupMenuTheme: PopupMenuThemeData(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       color: Palette.stroke,
       textStyle: Fonts.simText.copyWith(fontSize: 10.0, color: Colors.black),
       position: PopupMenuPosition.under),
+
+  // Bottom Navbar Theme
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: Palette.text,
     selectedLabelStyle:
@@ -25,5 +33,4 @@ final ThemeData theme = ThemeData(
     unselectedLabelStyle:
         Fonts.medText.copyWith(color: Palette.white, fontSize: 10.0),
   ),
-  scaffoldBackgroundColor: Palette.white,
 );

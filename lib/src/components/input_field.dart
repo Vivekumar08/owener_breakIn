@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../style/palette.dart';
 import '../style/fonts.dart';
 import '../utils/symbols.dart';
+import '../utils/validators.dart';
 
 // Basic Input Field
 class InputField extends StatelessWidget {
@@ -19,6 +21,8 @@ class InputField extends StatelessWidget {
     this.isPhone = false,
     this.expands = false,
     this.height,
+    this.validator,
+    this.autofillHints,
   }) : assert(
           (!expands && height == null) || (expands && height != null),
           'height must be non-null, when expands is true.',
@@ -31,6 +35,8 @@ class InputField extends StatelessWidget {
   final bool isPhone;
   final bool expands;
   final double? height;
+  final String? Function(String?)? validator;
+  final String? autofillHints;
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +50,19 @@ class InputField extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
           child: SizedBox(
-            height: height,
-            child: TextField(
+            height: height == null ? null : height! + 12,
+            child: TextFormField(
               controller: controller,
               style: Fonts.inputText.copyWith(color: Palette.text),
               textAlignVertical: TextAlignVertical.top,
               expands: expands,
               maxLines: expands ? null : 1,
               keyboardType: isPhone ? TextInputType.number : keyboardType,
+              validator: validator,
+              autofillHints: autofillHints == null ? null : [autofillHints!],
               decoration: InputDecoration(
                 filled: true,
+                helperText: expands ? ' ' : null,
                 fillColor: Palette.inputField,
                 border: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(Radius.circular(8.0)),
@@ -160,6 +169,14 @@ class _OtpFieldState extends State<OtpField> {
     super.initState();
   }
 
+  String getOtp() {
+    String otp = '';
+    for (var controller in controllerList) {
+      otp += controller.text;
+    }
+    return otp;
+  }
+
   @override
   void dispose() {
     for (var c in controllerList) {
@@ -185,6 +202,7 @@ class _OtpFieldState extends State<OtpField> {
                 keyboardType: TextInputType.number,
                 autofocus: index == 0 ? true : false,
                 maxLength: 1,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 style: Fonts.otpText,
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
@@ -234,7 +252,7 @@ class _OtpFieldState extends State<OtpField> {
                     FocusScope.of(context).nextFocus();
                   }
                   controllerList[index].text = value;
-                  widget.controller.text += value;
+                  widget.controller.text = getOtp();
                   if (controllerList.last.text.isNotEmpty) {
                     FocusScope.of(context).unfocus();
                   }
@@ -259,11 +277,13 @@ class PasswordField extends StatefulWidget {
     required this.inputText,
     required this.hintText,
     required this.controller,
+    this.validator = passwordValidation,
   });
 
   final String inputText;
   final String hintText;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -282,11 +302,13 @@ class _PasswordFieldState extends State<PasswordField> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 4.0),
-          child: TextField(
+          child: TextFormField(
             controller: widget.controller,
             style: Fonts.inputText.copyWith(color: Palette.text),
             obscureText: isObscure,
+            obscuringCharacter: '●',
             textAlignVertical: TextAlignVertical.top,
+            validator: widget.validator,
             decoration: InputDecoration(
               filled: true,
               suffixIcon: GestureDetector(
@@ -357,70 +379,4 @@ class _LinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_LinePainter oldDelegate) => false;
-}
-
-class Dropdown extends StatefulWidget {
-  const Dropdown(
-      {super.key,
-      required this.inputText,
-      required this.items,
-      required this.controller});
-
-  final String inputText;
-  final List<String> items;
-  final TextEditingController controller;
-
-  @override
-  State<Dropdown> createState() => _DropdownState();
-}
-
-class _DropdownState extends State<Dropdown> {
-  @override
-  Widget build(BuildContext context) {
-    String dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
-    widget.controller.text = dropdownValue;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 16.0),
-          child: Text(widget.inputText, style: Fonts.inputText),
-        ),
-        const SizedBox(height: 4.0),
-        DropdownButtonFormField<String>(
-          value: dropdownValue,
-          style: Fonts.inputText.copyWith(color: Palette.text),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Palette.inputField,
-            border: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                borderSide: BorderSide(width: 1, color: Palette.stroke)),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                borderSide: BorderSide(width: 1, color: Palette.stroke)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: const BorderRadius.all(Radius.circular(8.0)),
-                borderSide: BorderSide(width: 1, color: Palette.stroke)),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-          ),
-          icon: const Icon(Icons.keyboard_arrow_down_outlined),
-          borderRadius: BorderRadius.circular(8.0),
-          onChanged: (String? value) {
-            setState(() {
-              dropdownValue = value!;
-              widget.controller.text = dropdownValue;
-            });
-          },
-          items: widget.items.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
 }

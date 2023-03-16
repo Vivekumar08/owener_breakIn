@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../components/button.dart';
-import '../../style/fonts.dart';
 import '../../utils/images.dart';
+import '../../style/fonts.dart';
 
 class PasswordChanged extends StatelessWidget {
   const PasswordChanged({super.key});

@@ -13,8 +13,6 @@ class Images {
   static Image get mMenu =>
       Image.asset("$_initialPath/manager_menu.png", scale: 2);
   static Image get menu => Image.asset("$_initialPath/menu.png", scale: 0.5);
-  static Image get profile =>
-      Image.asset("$_initialPath/profile.png", scale: 2);
   static Image get happy => Image.asset("$_initialPath/happy.png", height: 40);
   static Image get sad => Image.asset("$_initialPath/sad.png", height: 40);
   static Image get dummy => Image.asset("$_initialPath/dummy.png", scale: 2);

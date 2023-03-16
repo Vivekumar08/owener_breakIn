@@ -63,7 +63,8 @@ class _AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
+      borderRadius: BorderRadius.circular(12.0),
       onTap: onTap,
       child: Container(
         height: 56,

@@ -1,4 +1,3 @@
-
 // Contact Validation
 String? contactValidation(String? input) {
   if (input == null || input.trim().isEmpty) {

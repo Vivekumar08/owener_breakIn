@@ -1,4 +1,3 @@
-import 'package:break_in/src/models/owner.dart';
 import 'package:flutter/foundation.dart';
 import 'constants.dart';
 import '../locator.dart';
@@ -46,7 +45,7 @@ class AuthProvider extends ChangeNotifier {
     if (response[code] == 200) {
       Owner owner = Owner.fromJson(response[userLogin]);
       locator.get<TokenStorage>().setToken(response[token]);
-      (await locator.getAsync<UserStorage>()).addUser(owner);
+      (await locator.getAsync<OwnerStorage>()).addOwner(owner);
       _changeAuthState(AuthState.Authenticated);
     } else {
       if (response[msg] != null) {
@@ -69,9 +68,9 @@ class AuthProvider extends ChangeNotifier {
     print(response);
 
     if (response[code] == 200) {
-      Owner owner = Owner.fromJson(response[savedUser]);
+      Owner owner = Owner.fromJson(response[savedOwner]);
       locator.get<TokenStorage>().setToken(response[token]);
-      (await locator.getAsync<UserStorage>()).addUser(owner);
+      (await locator.getAsync<OwnerStorage>()).addOwner(owner);
       _changeAuthState(AuthState.Authenticated);
     } else {
       if (response[msg] != null) {

@@ -1,9 +1,6 @@
 import 'dart:async' show TimeoutException;
 import 'dart:convert' show jsonEncode, jsonDecode;
 import 'dart:io' show HttpHeaders, SocketException;
-import 'dart:typed_data' show Uint8List;
-import 'package:image_picker/image_picker.dart' show XFile;
-import 'package:mime/mime.dart';
 import '../constants.dart';
 import 'package:http/http.dart' as http;
 
@@ -72,37 +69,6 @@ class ProfileService {
       ).timeout(settingsTimeout);
 
       body = jsonDecode(response.body);
-      body.addAll({'code': response.statusCode});
-    } on TimeoutException catch (_) {
-      timeOut();
-    } on SocketException catch (_) {
-      noInternet();
-    } catch (e) {
-      throw Exception(e);
-    }
-    return body;
-  }
-
-  Future<Map<String, dynamic>> uploadProfilePic(
-      String token, XFile file) async {
-    Map<String, dynamic> body = {};
-    try {
-      http.MultipartRequest request =
-          http.MultipartRequest('POST', Uri.parse('$baseUrl/profilePic'));
-      request.fields['filename'] = file.name;
-      request.fields['mimetype'] = lookupMimeType(file.path) ?? 'image/';
-      request.headers[HttpHeaders.authorizationHeader] = token;
-      request.headers[HttpHeaders.contentTypeHeader] = 'multipart/form-data';
-
-      final picture = http.MultipartFile.fromBytes(
-          'file', await file.readAsBytes(),
-          filename: file.name);
-      request.files.add(picture);
-
-      http.StreamedResponse response = await request.send();
-
-      Uint8List responseData = await response.stream.toBytes();
-      body = jsonDecode(String.fromCharCodes(responseData));
       body.addAll({'code': response.statusCode});
     } on TimeoutException catch (_) {
       timeOut();

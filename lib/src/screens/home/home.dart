@@ -49,7 +49,7 @@ class Home extends StatelessWidget {
         actions: [
           GestureDetector(
               onTap: () => context.go(profile), child: Symbols.profile),
-          const SizedBox(width: 24.0),
+          const SizedBox(width: 8.0),
         ],
       ),
       body: Padding(

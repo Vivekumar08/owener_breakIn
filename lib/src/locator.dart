@@ -13,6 +13,6 @@ setup() {
 
   // DB services
   locator.registerLazySingleton<TokenStorage>(() => TokenStorage());
-  locator.registerLazySingletonAsync<UserStorage>(
-      () async => await UserStorage.init());
+  locator.registerLazySingletonAsync<OwnerStorage>(
+      () async => await OwnerStorage.init());
 }

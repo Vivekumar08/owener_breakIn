@@ -60,14 +60,14 @@ Owner _$OwnerFromJson(Map<String, dynamic> json) => Owner(
       FullName: json['FullName'] as String,
       Email: json['Email'] as String?,
       PhoneNo: json['PhoneNo'] as String?,
-      ProfilePic: json['ProfilePic'] as String?,
-      Location: json['Location'] as String?,
+      ProfilePic: json['profilePic'] as String?,
+      Location: json['location'] as String?,
     );
 
 Map<String, dynamic> _$OwnerToJson(Owner instance) => <String, dynamic>{
       'FullName': instance.FullName,
       'Email': instance.Email,
       'PhoneNo': instance.PhoneNo,
-      'ProfilePic': instance.ProfilePic,
-      'Location': instance.Location,
+      'profilePic': instance.ProfilePic,
+      'location': instance.Location,
     };

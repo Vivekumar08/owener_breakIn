@@ -17,13 +17,15 @@ class Owner extends HiveObject {
   @HiveField(0)
   final String FullName;
   @HiveField(1)
-  final String? Email;
+  String? Email;
   @HiveField(2)
-  final String? PhoneNo;
+  String? PhoneNo;
   @HiveField(3)
-  final String? ProfilePic;
+  @JsonKey(name: 'profilePic')
+  String? ProfilePic;
   @HiveField(4)
-  final String? Location;
+  @JsonKey(name: 'location')
+  String? Location;
 
   factory Owner.fromJson(Map<String, dynamic> json) => _$OwnerFromJson(json);
 

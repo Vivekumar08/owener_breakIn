@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show MaterialPage;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/menu.dart';
@@ -16,7 +17,6 @@ import '../screens/onboarding/password_changed.dart';
 import '../screens/onboarding/register_with_mail.dart';
 import '../screens/onboarding/register_with_otp.dart';
 import '../screens/onboarding/register_with_phone.dart';
-import '../screens/pages/cover_image.dart';
 import '../screens/pages/insights.dart';
 import '../screens/pages/menu.dart';
 import '../screens/pages/add_new_item.dart';
@@ -110,6 +110,8 @@ final router = GoRouter(
     // Home
     GoRoute(
       path: '/home',
+      // TODO: implement redirect here
+      // redirect: (context, state) => async,
       pageBuilder: (context, state) =>
           FadeTransitionPage(key: state.pageKey, child: const Home()),
       routes: [
@@ -119,28 +121,34 @@ final router = GoRouter(
           routes: [
             GoRoute(
               path: 'coverImage',
-              builder: (context, state) => const CoverImage(),
+              pageBuilder: (context, state) => const MaterialPage(
+                  fullscreenDialog: true, child: CoverImage()),
             ),
-
             // Modify Item takes a MenuItem object & menuCategory String
             // to create Modify Item Page
             GoRoute(
               path: 'modifyItem/:category',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 assert(state.extra is MenuItem);
                 MenuItem menuItem = state.extra as MenuItem;
-                return ModifyItem(
-                    menuItem: menuItem, menuCategory: state.params['category']);
+                return MaterialPage(
+                  fullscreenDialog: true,
+                  child: ModifyItem(
+                      menuItem: menuItem,
+                      menuCategory: state.params['category']),
+                );
               },
             ),
 
             GoRoute(
               path: 'addNewItem',
-              builder: (context, state) => const AddNewItem(),
+              pageBuilder: (context, state) => const MaterialPage(
+                  fullscreenDialog: true, child: AddNewItem()),
               routes: [
                 GoRoute(
                   path: 'addNewCategory',
-                  builder: (context, state) => const AddNewCategory(),
+                  pageBuilder: (context, state) => const MaterialPage(
+                      fullscreenDialog: true, child: AddNewCategory()),
                 ),
               ],
             ),

@@ -34,7 +34,7 @@ class OwnerStorage {
   Future<void> updateProfilePic(String profilePic) async {
     try {
       Owner owner = storage.get(key);
-      owner.ProfilePic = profilePic;
+      owner.profilePic = profilePic;
       await updateOwner(owner);
     } catch (_) {}
   }

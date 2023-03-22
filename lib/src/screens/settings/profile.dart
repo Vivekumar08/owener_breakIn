@@ -7,6 +7,7 @@ import '../../components/routing_list.dart';
 import '../../providers/providers.dart';
 import '../../router/constants.dart';
 import '../../services/constants.dart';
+import '../../style/bottom_sheet.dart';
 import '../../style/fonts.dart';
 import '../../style/palette.dart';
 import '../../style/snack_bar.dart';
@@ -45,14 +46,14 @@ class Profile extends StatelessWidget {
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(owner.FullName,
+                              Text(owner.fullName,
                                   style: Fonts.subHeading.copyWith(
                                       color: Palette.text, fontSize: 16.0)),
                               const SizedBox(height: 8.0),
-                              Text(owner.Email ?? 'Email',
+                              Text(owner.email ?? 'Email',
                                   style: Fonts.medTextBlack
                                       .copyWith(fontSize: 12.0)),
-                              Text(owner.PhoneNo ?? 'Phone No.',
+                              Text(owner.phoneNo ?? 'Phone No.',
                                   style: Fonts.medTextBlack
                                       .copyWith(fontSize: 12.0)),
                               const Spacer(),
@@ -116,8 +117,8 @@ class _ProfilePicState extends State<ProfilePic> {
   @override
   void didChangeDependencies() {
     final provider = Provider.of<OwnerProvider>(context);
-    if (provider.owner != null && provider.owner!.ProfilePic != null) {
-      imageUrl = '$fileInfo/${provider.owner!.ProfilePic!}';
+    if (provider.owner != null && provider.owner!.profilePic != null) {
+      imageUrl = '$fileInfo/${provider.owner!.profilePic!}';
       setState(() {});
     }
     super.didChangeDependencies();
@@ -145,28 +146,20 @@ class _ProfilePicState extends State<ProfilePic> {
       customBorder: const CircleBorder(),
       onTap: () => provider.state.updating()
           ? showSnackBar('Profile Pic is getting uploaded...')
-          : showModalBottomSheet(
+          : showCustomBottomSheet(
               context: context,
-              builder: (context) => SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () async => uploadImage(provider),
-                        child: const ListTile(
-                            leading: Icon(Icons.camera), title: Text('Camera')),
-                      ),
-                      InkWell(
-                        onTap: () async => uploadImage(provider, gallery: true),
-                        child: const ListTile(
-                            leading: Icon(Icons.image), title: Text('Gallery')),
-                      ),
-                    ],
+              children: <CustomBottomSheetChild>[
+                  CustomBottomSheetChild(
+                    title: 'Camera',
+                    icon: Icons.camera,
+                    onTap: () async => uploadImage(provider),
                   ),
-                ),
-              ),
-            ),
+                  CustomBottomSheetChild(
+                    title: 'Gallery',
+                    icon: Icons.image,
+                    onTap: () async => uploadImage(provider, gallery: true),
+                  )
+                ]),
       child: CircleAvatar(
         radius: 40.0,
         backgroundColor: Palette.background,

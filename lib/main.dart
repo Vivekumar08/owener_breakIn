@@ -31,7 +31,8 @@ class MyApp extends StatelessWidget {
             create: (context) => OwnerProvider.init(),
             update: (_, token, auth, __) => OwnerProvider.fromProvider(
                 token.tokenExists, auth.state.isAuthenticated())),
-        Provider<ProfileProvider>(create: (context) => ProfileProvider())
+        Provider<ProfileProvider>(create: (context) => ProfileProvider()),
+        Provider<ListPlaceProvider>(create: (context) => ListPlaceProvider()),
       ],
       child: MaterialApp.router(
         theme: theme,

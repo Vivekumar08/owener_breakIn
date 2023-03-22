@@ -22,7 +22,7 @@ class OwnerProvider extends ChangeNotifier {
   OwnerState _state = OwnerState.Uninitialized;
   OwnerState get state => _state;
 
-  String? get name => _owner?.FullName;
+  String? get name => _owner?.fullName;
 
   void _changeOwnerState(OwnerState ownerState) {
     _state = ownerState;
@@ -47,9 +47,9 @@ class OwnerProvider extends ChangeNotifier {
 
   Future<String> getName() async {
     if (owner == null) {
-      return getOwnerData().then((_) => owner!.FullName);
+      return getOwnerData().then((_) => owner!.fullName);
     } else {
-      return owner!.FullName;
+      return owner!.fullName;
     }
   }
 

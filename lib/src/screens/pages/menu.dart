@@ -1,7 +1,9 @@
+import 'dart:io' show File;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../components/accordion.dart';
+import '../../components/button.dart';
 import '../../models/example.dart';
 import '../../models/menu.dart';
 import '../../router/constants.dart';
@@ -99,6 +101,52 @@ class Menu extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class CoverImage extends StatefulWidget {
+  const CoverImage({super.key});
+
+  @override
+  State<CoverImage> createState() => _CoverImageState();
+}
+
+class _CoverImageState extends State<CoverImage> {
+  ValueNotifier<File?> coverImage = ValueNotifier(null);
+
+  @override
+  void dispose() {
+    coverImage.value?.delete();
+    coverImage.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        leadingWidth: 72.0,
+        title: Text("Change Cover Image", style: Fonts.appBarTitle),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(22.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Cover Image', style: Fonts.inputText),
+            const SizedBox(height: 4.0),
+            UploadButton(notifier: coverImage, type: UploadButtonType.Image),
+            const Spacer(),
+            ValueListenableBuilder<File?>(
+                valueListenable: coverImage,
+                builder: (_, file, widget) => Button(
+                    buttonText: 'Save Changes',
+                    onPressed: file != null ? () {} : null))
+          ],
         ),
       ),
     );

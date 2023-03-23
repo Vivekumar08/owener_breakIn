@@ -1,49 +1,79 @@
-import 'dart:io' show File;
+import 'package:flutter/foundation.dart';
 import 'constants.dart';
 import '../locator.dart';
+import '../models/models.dart';
 import '../services/api/api.dart';
 import '../services/db/db.dart';
 import '../style/snack_bar.dart';
 
 // AuthProvider Constants
 // ignore: constant_identifier_names
-enum ListState { Idle, Uploading, Uploaded }
+enum ListPlaceState { Idle, Uploading, Uploaded }
 
-extension ListExtension on ListState {
-  bool isUploaded() => this == ListState.Uploaded ? true : false;
+extension ListPlaceExtension on ListPlaceState {
+  bool isUploaded() => this == ListPlaceState.Uploaded ? true : false;
 }
 
 class ListPlaceProvider {
-  ListState _state = ListState.Idle;
+  ListPlaceState _state = ListPlaceState.Idle;
+  ListPlaceState get state => _state;
 
-  ListState get state => _state;
+  ListPlaceModel? _listPlaceModel;
+  ListPlaceModel? get listPlaceModel => _listPlaceModel;
 
-  void _changeViewState(ListState state) => _state = state;
+  void _changeViewState(ListPlaceState state) => _state = state;
 
-  Future<void> listPlace(
-      {required String placeName,
-      required String address,
-      required String ownerName,
-      required File file}) async {
-    _changeViewState(ListState.Uploading);
+  ListPlaceProvider();
+
+  ListPlaceProvider.init(bool token) {
+    if (token && listPlaceModel == null) {
+      getListPlace();
+    }
+  }
+
+  Future<void> listPlace(ListPlaceModel listPlace) async {
+    _changeViewState(ListPlaceState.Uploading);
     String? token = await locator.get<TokenStorage>().getToken();
     Map<String, dynamic> response =
         await locator.get<ListPlaceService>().listPlace({
-      "PlaceName": placeName,
-      "Address": address,
-      "OwnerName": ownerName,
-    }, token!, file);
-
-    print(response);
+      "PlaceName": listPlace.placeName,
+      "Address": listPlace.address,
+      "OwnerName": listPlace.ownerName,
+    }, token!, listPlace.document);
 
     if (response[code] == 200) {
-      showSnackBar(response[msg].toString());
-      _changeViewState(ListState.Uploaded);
+      _changeViewState(ListPlaceState.Uploaded);
     } else {
       if (response[msg] != null) {
         showSnackBar(response[err].toString());
       }
-      _changeViewState(ListState.Idle);
+      _changeViewState(ListPlaceState.Idle);
+    }
+  }
+
+  Future<void> getListPlace() async {
+    await locator.isReady<ListPlaceStorage>().whenComplete(() async {
+      _listPlaceModel = locator.get<ListPlaceStorage>().getListPlace();
+      if (_listPlaceModel == null) {
+        await getListPlaceFromServer();
+      }
+    });
+  }
+
+  Future<void> getListPlaceFromServer() async {
+    String? token = await locator.get<TokenStorage>().getToken();
+    Map<String, dynamic> response =
+        await locator.get<ListPlaceService>().getListPlace(token!);
+
+    if (response[code] == 200) {
+      _listPlaceModel = ListPlaceModel.fromJson(response);
+      // If status is verified or, make it local
+      if (_listPlaceModel?.status == ListPlaceStatus.verified) {
+        (await locator.getAsync<ListPlaceStorage>())
+            .addListPlace(_listPlaceModel!);
+      }
+    } else {
+      debugPrint(response.toString());
     }
   }
 }

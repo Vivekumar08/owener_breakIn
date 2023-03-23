@@ -30,6 +30,8 @@ class ProfileProvider {
     locator.get<TokenStorage>().clearToken();
     await locator.isReady<OwnerStorage>();
     locator.get<OwnerStorage>().deleteOwner();
+    await locator.isReady<ListPlaceStorage>();
+    locator.get<ListPlaceStorage>().deletelistPlace();
     debugPrint('logged Out Successfully');
   }
 

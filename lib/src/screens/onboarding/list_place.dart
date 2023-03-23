@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../components/button.dart';
 import '../../components/input_field.dart';
+import '../../models/models.dart';
 import '../../providers/providers.dart';
-import '../../router/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/loader.dart';
 import '../../style/message_dialog.dart';
@@ -85,27 +85,27 @@ class _ListPlaceState extends State<ListPlace> {
                       }
                       showLoader(context);
                       provider
-                          .listPlace(
+                          .listPlace(ListPlaceModel(
                               placeName: place.text,
                               address: address.text,
                               ownerName: owner.text,
-                              file: document.value!)
+                              document: document.value!))
                           .whenComplete(
                             () => provider.state.isUploaded()
                                 ? showMessageDialog(
+                                    dismissible: false,
                                     context: context,
                                     children: [
-                                      Text('Thank You',
-                                          style: Fonts.subHeading,
-                                          textAlign: TextAlign.center),
-                                      const SizedBox(height: 16.0),
-                                      Text(
-                                          'Your Document have been submitted successfully . As soon '
-                                          'as our team verifies your credentials, we will contact you.',
-                                          style: Fonts.simText,
-                                          textAlign: TextAlign.center)
-                                    ],
-                                  ).whenComplete(() => context.go(home))
+                                        Text('Thank You',
+                                            style: Fonts.subHeading,
+                                            textAlign: TextAlign.center),
+                                        const SizedBox(height: 16.0),
+                                        Text(
+                                            'Your Document have been submitted successfully . As soon '
+                                            'as our team verifies your credentials, we will contact you.',
+                                            style: Fonts.simText,
+                                            textAlign: TextAlign.center)
+                                      ])
                                 : context.pop(),
                           );
                     }

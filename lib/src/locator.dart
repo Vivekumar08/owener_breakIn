@@ -16,4 +16,6 @@ setup() {
   locator.registerLazySingleton<TokenStorage>(() => TokenStorage());
   locator.registerLazySingletonAsync<OwnerStorage>(
       () async => await OwnerStorage.init());
+  locator.registerLazySingletonAsync<ListPlaceStorage>(
+      () async => await ListPlaceStorage.init());
 }

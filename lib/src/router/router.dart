@@ -110,8 +110,6 @@ final router = GoRouter(
     // Home
     GoRoute(
       path: '/home',
-      // TODO: implement redirect here
-      // redirect: (context, state) => async,
       pageBuilder: (context, state) =>
           FadeTransitionPage(key: state.pageKey, child: const Home()),
       routes: [

@@ -37,4 +37,27 @@ class ListPlaceService {
     }
     return body;
   }
+
+  Future<Map<String, dynamic>> getListPlace(String token) async {
+    Map<String, dynamic> body = {};
+    try {
+      http.Response response = await http.get(
+        Uri.parse('$resUrl/listPlace/get'),
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(listPlaceTimeout);
+
+      body = jsonDecode(response.body);
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
 }

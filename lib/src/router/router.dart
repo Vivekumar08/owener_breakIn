@@ -1,3 +1,4 @@
+import 'package:break_in/src/screens/pages/add_food_place.dart';
 import 'package:flutter/material.dart' show MaterialPage;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -113,6 +114,10 @@ final router = GoRouter(
       pageBuilder: (context, state) =>
           FadeTransitionPage(key: state.pageKey, child: const Home()),
       routes: [
+        GoRoute(
+          path: 'addFoodPlace',
+          builder: (context, state) => const AddFoodPlace(),
+        ),
         GoRoute(
           path: 'menu',
           builder: (context, state) => const Menu(),

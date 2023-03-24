@@ -1,10 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/menu.dart';
 import '../router/constants.dart';
 import '../style/fonts.dart';
 import '../style/palette.dart';
+import 'button.dart';
 
 class Accordion extends StatefulWidget {
   const Accordion({Key? key, required this.menu}) : super(key: key);
@@ -132,12 +132,7 @@ class _AccordionBody extends StatelessWidget {
         children: [
           Text('Rs. ${menuItem.price}',
               style: Fonts.otpText.copyWith(fontSize: 16.0)),
-          SizedBox(
-            height: 20.0,
-            child: FittedBox(
-                fit: BoxFit.cover,
-                child: CupertinoSwitch(value: true, onChanged: (value) {})),
-          ),
+          ToggleButton(notifier: ValueNotifier(true)),
         ],
       ),
       horizontalTitleGap: 0,

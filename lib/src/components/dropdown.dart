@@ -34,7 +34,7 @@ class _DropdownState extends State<Dropdown> {
           alignedDropdown: true,
           child: DropdownButtonFormField<String>(
             value: dropdownValue,
-            menuMaxHeight: 250,
+            menuMaxHeight: 280,
             style: Fonts.inputText.copyWith(color: Palette.text),
             decoration: InputDecoration(
               filled: true,

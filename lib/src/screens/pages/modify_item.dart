@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../components/button.dart';
@@ -69,13 +68,7 @@ class ModifyItem extends StatelessWidget {
                 Text('Non-Veg',
                     style: Fonts.appBarTitle.copyWith(fontSize: 12.0)),
                 const SizedBox(width: 8.0),
-                SizedBox(
-                  height: 20.0,
-                  child: FittedBox(
-                      fit: BoxFit.cover,
-                      child:
-                          CupertinoSwitch(value: true, onChanged: (value) {})),
-                ),
+                ToggleButton(notifier: ValueNotifier(true)),
               ],
             ),
             const Spacer(),

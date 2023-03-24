@@ -1,5 +1,6 @@
 import 'dart:io' show File;
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -280,6 +281,31 @@ class _UploadButtonState extends State<UploadButton> {
                 ),
               );
       },
+    );
+  }
+}
+
+class ToggleButton extends StatelessWidget {
+  const ToggleButton({super.key, required this.notifier});
+
+  final ValueNotifier<bool> notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 20.0,
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: ValueListenableBuilder<bool>(
+          valueListenable: notifier,
+          builder: (context, state, _) {
+            return CupertinoSwitch(
+              value: state,
+              onChanged: (value) => notifier.value = value,
+            );
+          },
+        ),
+      ),
     );
   }
 }

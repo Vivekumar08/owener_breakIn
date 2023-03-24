@@ -24,6 +24,7 @@ const String insights = '$home/insights';
 
 // Pages Route
 const String menu = '$home/menu';
+const String addFoodPlace = '$home/addFoodPlace';
 const String coverImage = '$menu/coverImage';
 const String modifyItem = '$menu/modifyItem';
 const String addNewItem = '$menu/addNewItem';

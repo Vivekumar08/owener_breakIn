@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../components/button.dart';
 import '../../models/list_place.dart';
 import '../../providers/providers.dart';
 import '../../router/constants.dart';
@@ -18,12 +18,20 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  ValueNotifier<bool> notifier = ValueNotifier(true);
+
   @override
   void initState() {
     final provider = Provider.of<ListPlaceProvider>(context, listen: false);
     provider.getListPlace().whenComplete(
         () => _buildMessage(provider.listPlaceModel?.status, context));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    notifier.dispose();
+    super.dispose();
   }
 
   void _buildMessage(ListPlaceStatus? status, BuildContext context) {
@@ -65,74 +73,78 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ListPlaceProvider>(builder: (context, provider, _) {
-      return provider.listPlaceModel == null
-          ? const Scaffold()
-          : Scaffold(
-              appBar: AppBar(
-                leading: const Padding(
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Icon(Icons.location_on_outlined),
-                ),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      final model = provider.listPlaceModel;
+      return Scaffold(
+        appBar: AppBar(
+          leading: const Padding(
+            padding: EdgeInsets.only(left: 20.0),
+            child: Icon(Icons.location_on_outlined),
+          ),
+          title: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 2,
-                          child: Text(provider.listPlaceModel!.address,
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: model != null
+                          ? Text(model.address,
                               maxLines: 2,
                               textScaleFactor: MediaQuery.of(context)
                                   .textScaleFactor
-                                  .clamp(1, 1.2)),
-                        ),
-                        const SizedBox(width: 12.0),
-                      ],
+                                  .clamp(1, 1.2))
+                          : Container(),
                     ),
+                    const SizedBox(width: 12.0),
                   ],
                 ),
-                leadingWidth: 40.0,
-                actions: [
-                  GestureDetector(
-                      onTap: () => context.go(profile), child: Symbols.profile),
-                  const SizedBox(width: 8.0),
+              ],
+            ),
+          ),
+          leadingWidth: 40.0,
+          actions: [
+            GestureDetector(
+                onTap: () => context.go(profile), child: Symbols.profile),
+            const SizedBox(width: 8.0),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  model != null
+                      ? Text(
+                          model.placeName,
+                          style: Fonts.otpText.copyWith(fontSize: 14.0),
+                        )
+                      : Container(),
+                  SizedBox(
+                    height: 20.0,
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: ToggleButton(notifier: notifier),
+                    ),
+                  ),
                 ],
               ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          provider.listPlaceModel!.placeName,
-                          style: Fonts.otpText.copyWith(fontSize: 14.0),
-                        ),
-                        SizedBox(
-                          height: 20.0,
-                          child: FittedBox(
-                              fit: BoxFit.cover,
-                              child: CupertinoSwitch(
-                                  value: true, onChanged: (value) {})),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildOptions(
-                            Images.mMenu, 'Manage Menu', menu, context),
-                        _buildOptions(Images.insights, 'Customer Insights',
-                            insights, context)
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            );
+              const SizedBox(height: 16.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildOptions(Images.mMenu, 'Manage Menu', menu, context),
+                  _buildOptions(
+                      Images.insights, 'Customer Insights', insights, context)
+                ],
+              )
+            ],
+          ),
+        ),
+      );
     });
   }
 }

@@ -33,7 +33,6 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  // initialLocation: home,
   routes: [
     GoRoute(
       path: '/',
@@ -41,6 +40,8 @@ final router = GoRouter(
       redirect: (context, GoRouterState state) async {
         bool token = await context.read<TokenProvider>().doesTokenExists();
         if (token) {
+          // Enter initial location here to test
+          // Overrider token not initialzed error
           return home;
         } else {
           return null;

@@ -7,7 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../style/bottom_sheet.dart';
 import '../style/fonts.dart';
 import '../style/palette.dart';
-import '../style/snack_bar.dart';
 import '../utils/symbols.dart';
 
 class Button extends StatelessWidget {
@@ -119,43 +118,54 @@ class ChevBackButton extends StatelessWidget {
   }
 }
 
+class UploadFormButton extends FormField<File?> {
+  UploadFormButton(
+      {super.key,
+      required ValueNotifier<File?> notifier,
+      UploadButtonType type = UploadButtonType.Custom,
+      AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
+      super.validator})
+      : super(
+          initialValue: notifier.value,
+          autovalidateMode: autovalidateMode,
+          builder: (state) => UploadButton(
+            notifier: notifier,
+            type: type,
+            state: state,
+            autovalidateMode: autovalidateMode,
+          ),
+        );
+
+  @override
+  FormFieldState<File?> createState() => _UploadFormButtonState();
+}
+
+class _UploadFormButtonState extends FormFieldState<File?> {}
+
 // ignore: constant_identifier_names
 enum UploadButtonType { Custom, Pdf, Image }
 
 // ignore: must_be_immutable
 class UploadButton extends StatefulWidget {
   /// Size limit is in kiloBytes (default 1000 kb)
-  UploadButton(
-      {super.key,
-      this.notifier,
-      this.type = UploadButtonType.Custom,
-      this.sizeLimit = 1000});
+  UploadButton({
+    super.key,
+    required this.notifier,
+    this.type = UploadButtonType.Custom,
+    this.state,
+    this.autovalidateMode,
+  });
 
-  ValueNotifier<File?>? notifier;
+  ValueNotifier<File?> notifier;
   UploadButtonType type;
-  int sizeLimit;
+  FormFieldState<File?>? state;
+  AutovalidateMode? autovalidateMode;
 
   @override
   State<UploadButton> createState() => _UploadButtonState();
 }
 
 class _UploadButtonState extends State<UploadButton> {
-  ValueNotifier<bool> uploadButtonState = ValueNotifier(false);
-
-  @override
-  void initState() {
-    uploadButtonState.value = widget.notifier?.value != null;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    uploadButtonState.dispose();
-    super.dispose();
-  }
-
-  void changeState(bool state) => uploadButtonState.value = state;
-
   Future<void> uploadFile({bool gallery = false}) async {
     try {
       widget.type == UploadButtonType.Custom
@@ -168,29 +178,18 @@ class _UploadButtonState extends State<UploadButton> {
 
       if (result != null) {
         File file = File(result.files.single.path!);
-        if (file.lengthSync() > widget.sizeLimit * 1000) {
-          showSnackBar(
-              'File mustn\'t be greater than ${getLimit(widget.sizeLimit)} ');
-          return;
-        }
-        widget.notifier?.value = file;
-        changeState(true);
-      } else {
-        changeState(false);
-      }
+        widget.notifier.value = file;
+        changeFormState(file);
+      } else {}
     } catch (_) {}
   }
 
-  String getLimit(int limit) {
-    if (limit >= 1000) {
-      if (limit % 1000 == 0) {
-        return '${limit ~/ 1000} mb';
-      } else {
-        return '${(limit / 1000)} mb';
-      }
-    } else {
-      return '$limit kb';
-    }
+  void changeFormState(File? file) {
+    widget.autovalidateMode == AutovalidateMode.always
+        ? widget.state?.didChange(file)
+        : widget.autovalidateMode == AutovalidateMode.onUserInteraction
+            ? widget.state?.setValue(file)
+            : null;
   }
 
   Widget render(File file) {
@@ -209,83 +208,108 @@ class _UploadButtonState extends State<UploadButton> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: uploadButtonState,
-      builder: (context, exists, child) {
-        return exists && widget.notifier != null
-            ? Stack(children: [
-                GestureDetector(
-                    onTap: () =>
-                        launchUrl(Uri.file(widget.notifier!.value!.path)),
-                    child: render(widget.notifier!.value!)),
-                const Positioned(
-                    top: 7.0,
-                    right: 11.0,
-                    child: Icon(Icons.close_rounded, size: 10)),
-                Positioned(
-                  top: 4.0,
-                  right: 8.0,
-                  child: GestureDetector(
-                    onTap: () {
-                      try {
-                        widget.notifier?.value?.deleteSync();
-                        widget.notifier?.value = null;
-                      } catch (_) {}
-                      changeState(false);
-                    },
-                    child: const Icon(Icons.circle_outlined, size: 16.0),
-                  ),
-                )
-              ])
-            : GestureDetector(
-                onTap: () => widget.type == UploadButtonType.Pdf
-                    ? uploadFile()
-                    : widget.type == UploadButtonType.Image
-                        ? uploadFile(gallery: true)
-                        : showCustomBottomSheet(
-                            context: context,
-                            children: <CustomBottomSheetChild>[
-                                CustomBottomSheetChild(
-                                  title: 'File',
-                                  icon: Icons.upload_file_rounded,
-                                  onTap: () async => uploadFile(),
-                                ),
-                                CustomBottomSheetChild(
-                                  title: 'Gallery',
-                                  icon: Icons.image,
-                                  onTap: () async => uploadFile(gallery: true),
-                                ),
-                              ]),
-                child: Container(
-                  height: 80.0,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Palette.stroke,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(flex: 2, child: Symbols.upload),
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            text: 'Drag & Drop files or Upload ',
-                            style: Fonts.hintText.copyWith(color: Palette.text),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: 'here',
+    return ValueListenableBuilder<File?>(
+      valueListenable: widget.notifier,
+      builder: (context, value, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            value != null
+                ? Stack(children: [
+                    GestureDetector(
+                        onTap: () =>
+                            launchUrl(Uri.file(widget.notifier.value!.path)),
+                        child: render(widget.notifier.value!)),
+                    const Positioned(
+                        top: 7.0,
+                        right: 11.0,
+                        child: Icon(Icons.close_rounded, size: 10)),
+                    Positioned(
+                      top: 4.0,
+                      right: 8.0,
+                      child: GestureDetector(
+                        onTap: () {
+                          try {
+                            widget.notifier.value?.deleteSync();
+                            widget.notifier.value = null;
+                            changeFormState(null);
+                          } catch (_) {}
+                        },
+                        child: const Icon(Icons.circle_outlined, size: 16.0),
+                      ),
+                    )
+                  ])
+                : GestureDetector(
+                    onTap: () => widget.type == UploadButtonType.Pdf
+                        ? uploadFile()
+                        : widget.type == UploadButtonType.Image
+                            ? uploadFile(gallery: true)
+                            : showCustomBottomSheet(
+                                context: context,
+                                children: <CustomBottomSheetChild>[
+                                    CustomBottomSheetChild(
+                                      title: 'File',
+                                      icon: Icons.upload_file_rounded,
+                                      onTap: () async => uploadFile(),
+                                    ),
+                                    CustomBottomSheetChild(
+                                      title: 'Gallery',
+                                      icon: Icons.image,
+                                      onTap: () async =>
+                                          uploadFile(gallery: true),
+                                    ),
+                                  ]),
+                    child: Container(
+                      height: 80.0,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Palette.stroke,
+                        borderRadius: BorderRadius.circular(8.0),
+                        border: widget.state != null && widget.state!.hasError
+                            ? Border.all(
+                                color: Theme.of(context).colorScheme.error)
+                            : null,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(flex: 2, child: Symbols.upload),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                text: 'Drag & Drop files or Upload ',
                                 style: Fonts.hintText
-                                    .copyWith(color: Palette.link),
-                              )
-                            ],
+                                    .copyWith(color: Palette.text),
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'here',
+                                    style: Fonts.hintText
+                                        .copyWith(color: Palette.link),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+            widget.state == null
+                ? Container()
+                : widget.state!.hasError && widget.state?.errorText != null
+                    ? Padding(
+                        padding: const EdgeInsets.fromLTRB(16.0, 7.0, 0, 0),
+                        child: Text(
+                          widget.state!.errorText!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                            fontSize: 12,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+                      )
+                    : Container()
+          ],
+        );
       },
     );
   }

@@ -2,19 +2,6 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'generated/list_place.g.dart';
 
-// Hive don't accept cuustom datatypes
-@HiveType(typeId: 2)
-enum ListPlaceStatus {
-  @HiveField(0)
-  verified,
-
-  @HiveField(1)
-  unverified,
-
-  @HiveField(2)
-  verifying
-}
-
 @HiveType(typeId: 1)
 @JsonSerializable()
 class ListPlaceModel extends HiveObject {
@@ -53,4 +40,17 @@ class ListPlaceModel extends HiveObject {
       _$ListPlaceModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$ListPlaceModelToJson(this);
+}
+
+// Hive don't accept cuustom datatypes
+@HiveType(typeId: 2)
+enum ListPlaceStatus {
+  @HiveField(0)
+  verified,
+
+  @HiveField(1)
+  unverified,
+
+  @HiveField(2)
+  verifying
 }

@@ -1,43 +1,75 @@
-class MenuCategory {
+import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'generated/menu.g.dart';
+
+@HiveType(typeId: 6)
+@JsonSerializable()
+class MenuCategory extends HiveObject {
   MenuCategory({
-    required this.menuCategory,
-    required this.menuItems,
+    required this.name,
+    required this.items,
     this.isExpanded = false,
+    required this.foodPlaceId,
   });
 
-  final String menuCategory;
-  final List<MenuItem> menuItems;
+  @HiveField(0)
+  @JsonKey(name: 'Name')
+  final String name;
+
+  @HiveField(1)
+  @JsonKey(name: 'Items')
+  final List<MenuItem> items;
+
+  @HiveField(2)
+  @JsonKey(includeToJson: false, includeFromJson: false)
   bool isExpanded;
 
-  static MenuCategory fromJson(Map<String, dynamic> map) => MenuCategory(
-        menuCategory: map['menuCategory'],
-        menuItems: MenuItem.fromJsonToList(map['menuItems']),
-      );
+  @HiveField(3)
+  @JsonKey(name: 'foodPlace')
+  final String foodPlaceId;
+
+  factory MenuCategory.fromJson(Map<String, dynamic> json) =>
+      _$MenuCategoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MenuCategoryToJson(this);
 }
 
-class MenuItem {
+@HiveType(typeId: 7)
+@JsonSerializable()
+class MenuItem extends HiveObject {
   MenuItem({
+    this.id,
     required this.item,
-    required this.itemDetails,
+    required this.details,
     required this.price,
     required this.isVeg,
+    this.isAvailable = true,
   });
+
+  @HiveField(0)
+  @JsonKey(name: '_id')
+  final String? id;
+
+  @HiveField(1)
+  @JsonKey(name: 'ItemName')
   final String item;
-  final String itemDetails;
+
+  @HiveField(2)
+  @JsonKey(name: 'Ingredients')
+  final String details;
+
+  @HiveField(3)
+  @JsonKey(name: 'Name')
   final int price;
+
+  @HiveField(4)
   final bool isVeg;
 
-  static MenuItem fromJson(Map<String, dynamic> map) => MenuItem(
-      item: map['item'],
-      itemDetails: map['itemDetails'],
-      price: map['price'],
-      isVeg: map['isVeg']);
+  @HiveField(5)
+  final bool isAvailable;
 
-  static List<MenuItem> fromJsonToList(List<Map<String, dynamic>> list) {
-    List<MenuItem> menuItems = [];
-    for (Map<String, dynamic> item in list)
-      // ignore: curly_braces_in_flow_control_structures
-      menuItems.add(MenuItem.fromJson(item));
-    return menuItems;
-  }
+  factory MenuItem.fromJson(Map<String, dynamic> json) =>
+      _$MenuItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$MenuItemToJson(this);
 }

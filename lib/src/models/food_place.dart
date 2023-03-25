@@ -1,7 +1,68 @@
 // ignore_for_file: constant_identifier_names
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'models.dart';
 part 'generated/food_place.g.dart';
+
+@HiveType(typeId: 3)
+@JsonSerializable()
+class FoodPlaceModel extends HiveObject {
+  FoodPlaceModel({
+    required this.id,
+    required this.name,
+    required this.status,
+    required this.category,
+    required this.foodType,
+    required this.image,
+    required this.location,
+    required this.menu,
+    required this.rating,
+    required this.ratedBy,
+  });
+
+  @HiveField(0)
+  @JsonKey(name: 'foodPlaceId')
+  final String id;
+
+  @HiveField(1)
+  @JsonKey(name: 'FoodPlaceName')
+  final String name;
+
+  @HiveField(2)
+  final bool status;
+
+  @HiveField(3)
+  final FoodPlaceCategory category;
+
+  @HiveField(4)
+  @JsonKey(name: 'type')
+  final String foodType;
+
+  @HiveField(5)
+  @JsonKey(name: 'CoverPhoto')
+  final String image;
+
+  @HiveField(6)
+  @JsonKey(name: 'Locations')
+  final Location location;
+
+  @HiveField(7)
+  @JsonKey(name: 'Menu')
+  final List<MenuItem> menu;
+
+  @HiveField(8)
+  @JsonKey(name: 'Ratings')
+  final double rating;
+
+  @HiveField(9)
+  @JsonKey(name: 'RatedBy')
+  final int ratedBy;
+
+  factory FoodPlaceModel.fromJson(Map<String, dynamic> json) =>
+      _$FoodPlaceModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FoodPlaceModelToJson(this);
+}
 
 // Hive don't accept cuustom datatypes
 @HiveType(typeId: 4)
@@ -20,67 +81,6 @@ enum FoodPlaceCategory {
 
   @HiveField(4)
   Diary_Booth
-}
-
-@HiveType(typeId: 3)
-@JsonSerializable()
-class FoodPlaceModel extends HiveObject {
-  FoodPlaceModel({
-    required this.name,
-    required this.id,
-    required this.status,
-    required this.category,
-    required this.foodType,
-    required this.image,
-    required this.location,
-    required this.menu,
-    required this.rating,
-    required this.ratedBy,
-  });
-
-  @HiveField(0)
-  @JsonKey(name: 'FoodPlaceName')
-  final String name;
-
-  @HiveField(1)
-  @JsonKey(name: 'foodPlaceId')
-  final String id;
-
-  @HiveField(2)
-  final bool status;
-
-  @HiveField(3)
-  @JsonKey()
-  final FoodPlaceCategory category;
-
-  @HiveField(4)
-  @JsonKey(name: 'type')
-  final String foodType;
-
-  @HiveField(5)
-  @JsonKey(name: 'CoverPhoto')
-  final String image;
-
-  @HiveField(6)
-  @JsonKey(name: 'Locations')
-  final Location location;
-
-  @HiveField(7)
-  @JsonKey(name: 'Menu')
-  final String menu;
-
-  @HiveField(8)
-  @JsonKey(name: 'Ratings')
-  final double rating;
-
-  @HiveField(9)
-  @JsonKey(name: 'RatedBy')
-  final int ratedBy;
-
-  factory FoodPlaceModel.fromJson(Map<String, dynamic> json) =>
-      _$FoodPlaceModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FoodPlaceModelToJson(this);
 }
 
 @HiveType(typeId: 5)

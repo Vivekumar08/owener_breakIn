@@ -7,7 +7,6 @@ import '../../components/input_field.dart';
 import '../../router/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/loader.dart';
-import '../../style/snack_bar.dart';
 import '../../utils/constants.dart';
 import '../../utils/validators.dart';
 
@@ -45,6 +44,7 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
     type.dispose();
     image.value?.delete();
     image.dispose();
+    _formKey.currentState?.dispose();
     super.dispose();
   }
 
@@ -61,8 +61,9 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
         padding: const EdgeInsets.fromLTRB(22.0, 8.0, 22.0, 22.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            physics: const ClampingScrollPhysics(),
+            padding: EdgeInsets.zero,
             children: [
               InputField(
                   inputText: "Place Name*",
@@ -90,17 +91,16 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
                   controller: type,
                   validator: nullValidation),
               const SizedBox(height: 16.0),
-              Text('Image', style: Fonts.inputText),
+              Text('Image*', style: Fonts.inputText),
               const SizedBox(height: 4.0),
-              UploadButton(notifier: image, type: UploadButtonType.Image),
-              const SizedBox(height: 16.0),
-              const Spacer(),
+              UploadFormButton(
+                  notifier: image,
+                  type: UploadButtonType.Image,
+                  validator: fileValidationWithSize()),
+              const SizedBox(height: 24.0),
               Button(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      if (image.value == null) {
-                        return showSnackBar('No Image added');
-                      }
                       showLoader(context);
                     }
                   },

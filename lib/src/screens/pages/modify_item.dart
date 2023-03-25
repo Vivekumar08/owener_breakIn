@@ -23,7 +23,7 @@ class ModifyItem extends StatelessWidget {
         TextEditingController(text: menuItem.price.toString());
     TextEditingController category = TextEditingController();
     TextEditingController ingredients =
-        TextEditingController(text: menuItem.itemDetails);
+        TextEditingController(text: menuItem.details);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

@@ -25,15 +25,15 @@ class _AccordionState extends State<Accordion> {
     return Column(
       children: [
         _AccordionHeader(
-            title: widget.menu.menuCategory,
+            title: widget.menu.name,
             isExpanded: widget.menu.isExpanded,
             onPressed: () => expansionCallback(0, widget.menu.isExpanded)),
         widget.menu.isExpanded
             ? Column(
                 children: [
-                  for (MenuItem item in widget.menu.menuItems)
+                  for (MenuItem item in widget.menu.items)
                     _AccordionBody(
-                        menuItem: item, menuCategory: widget.menu.menuCategory)
+                        menuItem: item, menuCategory: widget.menu.name)
                 ],
               )
             : Container()
@@ -92,7 +92,7 @@ class _AccordionBody extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(menuItem.itemDetails,
+          Text(menuItem.details,
               style: Fonts.simTextBlack.copyWith(letterSpacing: 0)),
           const SizedBox(height: 8.0),
           Row(

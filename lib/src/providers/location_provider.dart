@@ -23,9 +23,7 @@ class LocationProvider extends ChangeNotifier {
   LocationState _state = LocationState.Uninitialized;
   LocationState get state => _state;
 
-  LocationProvider.init() {
-    // location =
-  }
+  LocationProvider.init();
 
   void _changeLocationState(LocationState locationState) {
     _state = locationState;
@@ -33,7 +31,6 @@ class LocationProvider extends ChangeNotifier {
   }
 
   Future<void> getLatLng() async {
-    print('called');
     _changeLocationState(LocationState.Detecting);
     try {
       location =

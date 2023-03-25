@@ -17,14 +17,14 @@ class FoodPlaceModelAdapter extends TypeAdapter<FoodPlaceModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return FoodPlaceModel(
-      name: fields[0] as String,
-      id: fields[1] as String,
+      id: fields[0] as String,
+      name: fields[1] as String,
       status: fields[2] as bool,
       category: fields[3] as FoodPlaceCategory,
       foodType: fields[4] as String,
       image: fields[5] as String,
       location: fields[6] as Location,
-      menu: fields[7] as String,
+      menu: (fields[7] as List).cast<MenuItem>(),
       rating: fields[8] as double,
       ratedBy: fields[9] as int,
     );
@@ -35,9 +35,9 @@ class FoodPlaceModelAdapter extends TypeAdapter<FoodPlaceModel> {
     writer
       ..writeByte(10)
       ..writeByte(0)
-      ..write(obj.name)
-      ..writeByte(1)
       ..write(obj.id)
+      ..writeByte(1)
+      ..write(obj.name)
       ..writeByte(2)
       ..write(obj.status)
       ..writeByte(3)
@@ -170,22 +170,24 @@ class FoodPlaceCategoryAdapter extends TypeAdapter<FoodPlaceCategory> {
 
 FoodPlaceModel _$FoodPlaceModelFromJson(Map<String, dynamic> json) =>
     FoodPlaceModel(
-      name: json['FoodPlaceName'] as String,
       id: json['foodPlaceId'] as String,
+      name: json['FoodPlaceName'] as String,
       status: json['status'] as bool,
       category: $enumDecode(_$FoodPlaceCategoryEnumMap, json['category']),
       foodType: json['type'] as String,
       image: json['CoverPhoto'] as String,
       location: Location.fromJson(json['Locations'] as Map<String, dynamic>),
-      menu: json['Menu'] as String,
+      menu: (json['Menu'] as List<dynamic>)
+          .map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
       rating: (json['Ratings'] as num).toDouble(),
       ratedBy: json['RatedBy'] as int,
     );
 
 Map<String, dynamic> _$FoodPlaceModelToJson(FoodPlaceModel instance) =>
     <String, dynamic>{
-      'FoodPlaceName': instance.name,
       'foodPlaceId': instance.id,
+      'FoodPlaceName': instance.name,
       'status': instance.status,
       'category': _$FoodPlaceCategoryEnumMap[instance.category]!,
       'type': instance.foodType,

@@ -9,7 +9,6 @@ import '../../providers/providers.dart';
 import '../../style/fonts.dart';
 import '../../style/loader.dart';
 import '../../style/message_dialog.dart';
-import '../../style/snack_bar.dart';
 import '../../utils/validators.dart';
 
 class ListPlace extends StatefulWidget {
@@ -71,7 +70,8 @@ class _ListPlaceState extends State<ListPlace> {
               const SizedBox(height: 16.0),
               Text('Add Documents', style: Fonts.inputText),
               const SizedBox(height: 4.0),
-              UploadButton(notifier: document),
+              UploadFormButton(
+                  notifier: document, validator: fileValidationWithSize()),
               const SizedBox(height: 16.0),
               Text(
                   'Submit Document Approved by Regulatory Authority/Institution/Government/fssai in .pdf/.jpg format.',
@@ -80,9 +80,6 @@ class _ListPlaceState extends State<ListPlace> {
               Button(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      if (document.value == null) {
-                        return showSnackBar('No Documents added');
-                      }
                       showLoader(context);
                       provider
                           .listPlace(ListPlaceModel(

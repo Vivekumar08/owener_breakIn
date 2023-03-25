@@ -10,10 +10,8 @@ const String registerWithPhone = '$loginWithPhone/registerWithPhone';
 const String registerWithOtp = '$registerWithPhone/registerWithOtp';
 const String registerWithMail = '$loginWithMail/registerWithMail';
 
-// TODO: Configure root
-const String detectingLocation = '/detectingLocation';
-const String detectedLocation = '/detectedLocation';
-const String manualLocation = '/manualLocation';
+// Location
+const String location = '/location';
 
 // List Place
 const String listPlace = '/listPlace';

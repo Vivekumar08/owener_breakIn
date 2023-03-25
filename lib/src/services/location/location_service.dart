@@ -1,8 +1,9 @@
 import 'package:geolocator/geolocator.dart';
+import '../../models/models.dart';
 
 class LocationService {
   /// Determine the current position of the device.
-  Future<Map<String, double>> getLocationAsCoordinates() async {
+  Future<Location> getLocationAsCoordinates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -27,23 +28,24 @@ class LocationService {
         // your App should show an explanatory UI now.
 
         Position? p = await Geolocator.getLastKnownPosition();
-        if (p != null) return {'lat': p.latitude, 'lng': p.longitude};
+        if (p != null) {
+          return Location(lat: p.latitude, lng: p.longitude, address: '');
+        }
 
-        return Future.error('Location permissions are denied');
+        return Future.error('DENIED');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('DENIED_FOREVER');
     }
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     Position p = await Geolocator.getCurrentPosition();
-    return {'lat': p.latitude, 'lng': p.longitude};
+    return Location(lat: p.latitude, lng: p.longitude, address: '');
   }
 
-  void openLocationSettings() async => await Geolocator.openLocationSettings();
+  Future<void> openLocationSettings() async =>
+      await Geolocator.openLocationSettings();
 }

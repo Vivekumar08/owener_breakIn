@@ -1,5 +1,5 @@
-import 'package:break_in/src/services/location/location_service.dart';
 import 'package:flutter/foundation.dart';
+import '../services/location/location.dart';
 import 'constants.dart';
 import '../locator.dart';
 import '../models/models.dart';
@@ -9,18 +9,19 @@ import '../style/snack_bar.dart';
 
 // Location Provider Constants
 // ignore: constant_identifier_names
-enum LocationState { Uninitialized, Detected, Detecting, Manual }
+enum LocationState { Uninitialized, Detected, Detecting, Manual, Denied }
 
 extension LocationExtension on LocationState {
   bool detected() => this == LocationState.Detected ? true : false;
   bool manual() => this == LocationState.Manual ? true : false;
+  bool denied() => this == LocationState.Denied ? true : false;
 }
 
 class LocationProvider extends ChangeNotifier {
+  Location? location;
+
   LocationState _state = LocationState.Uninitialized;
   LocationState get state => _state;
-
-  String location = '';
 
   LocationProvider.init() {
     // location =
@@ -34,11 +35,25 @@ class LocationProvider extends ChangeNotifier {
   Future<void> getLatLng() async {
     print('called');
     _changeLocationState(LocationState.Detecting);
-    Map<String, double> response =
-        await locator.get<LocationService>().getLocationAsCoordinates();
-    if (response.isNotEmpty) _changeLocationState(LocationState.Detected);
-    print(response);
+    try {
+      location =
+          await locator.get<LocationService>().getLocationAsCoordinates();
+      _changeLocationState(LocationState.Detected);
+    } catch (e) {
+      switch (e) {
+        case 'DENIED':
+          _changeLocationState(LocationState.Denied);
+          break;
+        case 'DENIED_FOREVER':
+          _changeLocationState(LocationState.Denied);
+          break;
+        default:
+      }
+    }
   }
 
   Future<void> toManual() async => _changeLocationState(LocationState.Manual);
+
+  Future<void> openLocationSettings() async =>
+      await locator.get<LocationService>().openLocationSettings();
 }

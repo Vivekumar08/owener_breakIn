@@ -1,11 +1,14 @@
 import 'dart:io' show File;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../components/button.dart';
 import '../../components/dropdown.dart';
 import '../../components/input_field.dart';
+import '../../router/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/loader.dart';
 import '../../style/snack_bar.dart';
+import '../../utils/constants.dart';
 import '../../utils/validators.dart';
 
 class AddFoodPlace extends StatefulWidget {
@@ -24,6 +27,14 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
   ValueNotifier<File?> image = ValueNotifier(null);
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.push(location);
+    });
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -71,13 +82,7 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
                   controller: landmark),
               Dropdown(
                   inputText: 'Category',
-                  items: const [
-                    'Canteen',
-                    'Mess',
-                    'Micro Cafe',
-                    'Juice Corner',
-                    'Diary Booth',
-                  ],
+                  items: categories,
                   controller: category),
               InputField(
                   inputText: "Food Type*",

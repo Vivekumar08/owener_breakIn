@@ -23,8 +23,9 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     final provider = Provider.of<ListPlaceProvider>(context, listen: false);
-    provider.getListPlace().whenComplete(
-        () => _buildMessage(provider.listPlaceModel?.status, context));
+    provider
+        .getListPlace()
+        .whenComplete(() => _buildMessage(provider.listPlaceModel?.status));
     super.initState();
   }
 
@@ -34,7 +35,7 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  void _buildMessage(ListPlaceStatus? status, BuildContext context) {
+  void _buildMessage(ListPlaceStatus? status) {
     if (status == null) {
       context.go(listPlace);
     } else {
@@ -59,8 +60,7 @@ class _HomeState extends State<Home> {
     }
   }
 
-  Widget _buildOptions(
-          Image image, String text, String route, BuildContext context) =>
+  Widget _buildOptions(Image image, String text, String route) =>
       GestureDetector(
         onTap: () => context.go(route),
         child: Column(children: [
@@ -136,9 +136,9 @@ class _HomeState extends State<Home> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildOptions(Images.mMenu, 'Manage Menu', menu, context),
-                  _buildOptions(
-                      Images.insights, 'Customer Insights', insights, context)
+                  _buildOptions(Images.mMenu, 'Manage Menu',
+                      model?.foodPlaceId == null ? addFoodPlace : menu),
+                  _buildOptions(Images.insights, 'Customer Insights', insights)
                 ],
               )
             ],

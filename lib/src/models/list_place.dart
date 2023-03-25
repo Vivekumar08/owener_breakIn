@@ -7,8 +7,10 @@ part 'generated/list_place.g.dart';
 enum ListPlaceStatus {
   @HiveField(0)
   verified,
+
   @HiveField(1)
   unverified,
+
   @HiveField(2)
   verifying
 }
@@ -22,21 +24,30 @@ class ListPlaceModel extends HiveObject {
     required this.ownerName,
     this.status,
     this.document,
+    this.foodPlaceId,
   });
+
   @HiveField(0)
   @JsonKey(name: 'PlaceName')
   final String placeName;
+
   @HiveField(1)
   @JsonKey(name: 'Address')
   final String address;
+
   @HiveField(2)
   @JsonKey(name: 'OwnerName')
   final String ownerName;
+
   @HiveField(3)
-  @JsonKey()
   ListPlaceStatus? status;
+
   @HiveField(4)
   dynamic document;
+
+  @HiveField(5)
+  @JsonKey(name: 'foodPlace')
+  String? foodPlaceId;
 
   factory ListPlaceModel.fromJson(Map<String, dynamic> json) =>
       _$ListPlaceModelFromJson(json);

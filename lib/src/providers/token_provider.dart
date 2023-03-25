@@ -8,6 +8,7 @@ class TokenProvider extends ChangeNotifier {
 
   void _changeTokenState(bool tokenState) {
     _tokenExists = tokenState;
+    notifyListeners();
   }
 
   Future<bool> doesTokenExists() async {

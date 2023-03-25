@@ -1,11 +1,10 @@
-import 'package:break_in/src/screens/pages/add_food_place.dart';
 import 'package:flutter/material.dart' show MaterialPage;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../models/menu.dart';
 import '../providers/providers.dart';
 import '../screens/home/home.dart';
-import '../screens/location/detecting_location.dart';
+import '../screens/location/location_screen.dart';
 import '../screens/onboarding/forgot_passwd.dart';
 import '../screens/onboarding/list_place.dart';
 import '../screens/onboarding/login_with_mail.dart';
@@ -18,6 +17,7 @@ import '../screens/onboarding/password_changed.dart';
 import '../screens/onboarding/register_with_mail.dart';
 import '../screens/onboarding/register_with_otp.dart';
 import '../screens/onboarding/register_with_phone.dart';
+import '../screens/pages/add_food_place.dart';
 import '../screens/pages/insights.dart';
 import '../screens/pages/menu.dart';
 import '../screens/pages/add_new_item.dart';
@@ -33,7 +33,7 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: detectingLocation,
+  // initialLocation: home,
   routes: [
     GoRoute(
       path: '/',
@@ -99,8 +99,9 @@ final router = GoRouter(
     ),
 
     GoRoute(
-      path: '/detectingLocation',
-      builder: (context, state) => const DetectingLocation(),
+      path: '/location',
+      pageBuilder: (context, state) =>
+          const MaterialPage(fullscreenDialog: true, child: LocationScreen()),
     ),
 
     GoRoute(

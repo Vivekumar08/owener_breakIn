@@ -22,13 +22,14 @@ class ListPlaceModelAdapter extends TypeAdapter<ListPlaceModel> {
       ownerName: fields[2] as String,
       status: fields[3] as ListPlaceStatus?,
       document: fields[4] as dynamic,
+      foodPlaceId: fields[5] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ListPlaceModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.placeName)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class ListPlaceModelAdapter extends TypeAdapter<ListPlaceModel> {
       ..writeByte(3)
       ..write(obj.status)
       ..writeByte(4)
-      ..write(obj.document);
+      ..write(obj.document)
+      ..writeByte(5)
+      ..write(obj.foodPlaceId);
   }
 
   @override
@@ -107,6 +110,7 @@ ListPlaceModel _$ListPlaceModelFromJson(Map<String, dynamic> json) =>
       ownerName: json['OwnerName'] as String,
       status: $enumDecodeNullable(_$ListPlaceStatusEnumMap, json['status']),
       document: json['document'],
+      foodPlaceId: json['foodPlace'] as String?,
     );
 
 Map<String, dynamic> _$ListPlaceModelToJson(ListPlaceModel instance) =>
@@ -116,6 +120,7 @@ Map<String, dynamic> _$ListPlaceModelToJson(ListPlaceModel instance) =>
       'OwnerName': instance.ownerName,
       'status': _$ListPlaceStatusEnumMap[instance.status],
       'document': instance.document,
+      'foodPlace': instance.foodPlaceId,
     };
 
 const _$ListPlaceStatusEnumMap = {

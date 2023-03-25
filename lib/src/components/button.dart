@@ -157,24 +157,28 @@ class _UploadButtonState extends State<UploadButton> {
   void changeState(bool state) => uploadButtonState.value = state;
 
   Future<void> uploadFile({bool gallery = false}) async {
-    widget.type == UploadButtonType.Custom ? Navigator.of(context).pop() : null;
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: gallery ? FileType.media : FileType.custom,
-      allowedExtensions: gallery ? null : ['jpg', 'jpeg', 'png', 'pdf'],
-    );
+    try {
+      widget.type == UploadButtonType.Custom
+          ? Navigator.of(context).pop()
+          : null;
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: gallery ? FileType.media : FileType.custom,
+        allowedExtensions: gallery ? null : ['jpg', 'jpeg', 'png', 'pdf'],
+      );
 
-    if (result != null) {
-      File file = File(result.files.single.path!);
-      if (file.lengthSync() > widget.sizeLimit * 1000) {
-        showSnackBar(
-            'File mustn\'t be greater than ${getLimit(widget.sizeLimit)} ');
-        return;
+      if (result != null) {
+        File file = File(result.files.single.path!);
+        if (file.lengthSync() > widget.sizeLimit * 1000) {
+          showSnackBar(
+              'File mustn\'t be greater than ${getLimit(widget.sizeLimit)} ');
+          return;
+        }
+        widget.notifier?.value = file;
+        changeState(true);
+      } else {
+        changeState(false);
       }
-      widget.notifier?.value = file;
-      changeState(true);
-    } else {
-      changeState(false);
-    }
+    } catch (_) {}
   }
 
   String getLimit(int limit) {
@@ -215,7 +219,9 @@ class _UploadButtonState extends State<UploadButton> {
                         launchUrl(Uri.file(widget.notifier!.value!.path)),
                     child: render(widget.notifier!.value!)),
                 const Positioned(
-                    top: 7.0, right: 11.0, child: Icon(Icons.close, size: 10)),
+                    top: 7.0,
+                    right: 11.0,
+                    child: Icon(Icons.close_rounded, size: 10)),
                 Positioned(
                   top: 4.0,
                   right: 8.0,
@@ -248,7 +254,7 @@ class _UploadButtonState extends State<UploadButton> {
                                   title: 'Gallery',
                                   icon: Icons.image,
                                   onTap: () async => uploadFile(gallery: true),
-                                )
+                                ),
                               ]),
                 child: Container(
                   height: 80.0,

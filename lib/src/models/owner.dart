@@ -12,17 +12,22 @@ class Owner extends HiveObject {
     this.profilePic,
     this.location,
   });
+
   @HiveField(0)
   @JsonKey(name: 'FullName')
   final String fullName;
+
   @HiveField(1)
   @JsonKey(name: 'Email')
   String? email;
+
   @HiveField(2)
   @JsonKey(name: 'PhoneNo')
   String? phoneNo;
+
   @HiveField(3)
   String? profilePic;
+
   @HiveField(4)
   String? location;
 

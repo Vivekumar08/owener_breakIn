@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/menu.dart';
 import '../providers/providers.dart';
 import '../screens/home/home.dart';
-import '../screens/location/detected_location.dart';
+import '../screens/location/detecting_location.dart';
 import '../screens/onboarding/forgot_passwd.dart';
 import '../screens/onboarding/list_place.dart';
 import '../screens/onboarding/login_with_mail.dart';
@@ -33,7 +33,7 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: loginWithMail,
+  initialLocation: detectingLocation,
   routes: [
     GoRoute(
       path: '/',
@@ -99,8 +99,8 @@ final router = GoRouter(
     ),
 
     GoRoute(
-      path: '/detectedLocation',
-      builder: (context, state) => const DetectedLocation(),
+      path: '/detectingLocation',
+      builder: (context, state) => const DetectingLocation(),
     ),
 
     GoRoute(

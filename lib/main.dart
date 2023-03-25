@@ -36,6 +36,7 @@ class MyApp extends StatelessWidget {
           create: (context) => ListPlaceProvider(),
           update: (_, token, __) => ListPlaceProvider.init(token.tokenExists),
         ),
+        ChangeNotifierProvider(create: (context) => LocationProvider.init()),
       ],
       child: MaterialApp.router(
         theme: theme,

@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'services/api/api.dart';
 import 'services/db/db.dart';
+import 'services/location/location.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -18,4 +19,7 @@ setup() {
       () async => await OwnerStorage.init());
   locator.registerLazySingletonAsync<ListPlaceStorage>(
       () async => await ListPlaceStorage.init());
+
+  // Location Service
+  locator.registerLazySingleton<LocationService>(() => LocationService());
 }

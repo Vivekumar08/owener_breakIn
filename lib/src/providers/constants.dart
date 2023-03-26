@@ -7,6 +7,8 @@ String msg = 'msg';
 String error = 'error';
 String err = 'err';
 String fileName = 'filename';
+String foodPlace = 'foodPlace';
+String foodPlaceId = 'foodPlaceId';
 
 // Constants
 

@@ -31,7 +31,7 @@ class _AccordionState extends State<Accordion> {
         widget.menu.isExpanded
             ? Column(
                 children: [
-                  for (MenuItem item in widget.menu.items)
+                  for (MenuItem item in widget.menu.items!)
                     _AccordionBody(
                         menuItem: item, menuCategory: widget.menu.name)
                 ],

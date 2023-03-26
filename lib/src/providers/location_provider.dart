@@ -1,11 +1,8 @@
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import '../services/location/location.dart';
-import 'constants.dart';
 import '../locator.dart';
 import '../models/models.dart';
-import '../services/api/api.dart';
-import '../services/db/db.dart';
-import '../style/snack_bar.dart';
 
 // Location Provider Constants
 // ignore: constant_identifier_names
@@ -33,8 +30,11 @@ class LocationProvider extends ChangeNotifier {
   Future<void> getLatLng() async {
     _changeLocationState(LocationState.Detecting);
     try {
-      location =
+      Position position =
           await locator.get<LocationService>().getLocationAsCoordinates();
+
+      location = Location(
+          lat: position.latitude, lng: position.longitude, address: '');
       _changeLocationState(LocationState.Detected);
     } catch (e) {
       switch (e) {

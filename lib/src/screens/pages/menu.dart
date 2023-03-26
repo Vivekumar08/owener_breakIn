@@ -86,8 +86,7 @@ class Menu extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 6.0),
-                    for (Map<String, dynamic> item
-                        in menuComplete['menuCategories'])
+                    for (Map<String, dynamic> item in menuComplete['Category'])
                       Accordion(menu: MenuCategory.fromJson(item))
                   ],
                 ),

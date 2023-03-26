@@ -1,3 +1,4 @@
+import 'dart:io' show File;
 import 'package:flutter/foundation.dart';
 import 'constants.dart';
 import '../locator.dart';
@@ -74,6 +75,44 @@ class ListPlaceProvider {
       }
     } else {
       debugPrint(response.toString());
+    }
+  }
+
+  Future<void> addFoodPlace({
+    required String name,
+    required String type,
+    required String category,
+    required String lat,
+    required String lng,
+    required String address,
+    required String landmark,
+    required File image,
+  }) async {
+    _changeViewState(ListPlaceState.Uploading);
+    String? token = await locator.get<TokenStorage>().getToken();
+    Map<String, dynamic> response =
+        await locator.get<ListPlaceService>().addFoodPlace({
+      "FoodPlaceName": name,
+      "type": type,
+      "category": category,
+      "lat": lat,
+      "lng": lng,
+      "address": address,
+      "landmark": landmark,
+    }, token!, image);
+
+    print(response);
+
+    if (response[code] == 200) {
+      await locator.isReady<ListPlaceStorage>();
+      await locator.get<ListPlaceStorage>().updateListPlaceDetails({
+        foodPlace: response[foodPlace][foodPlaceId]
+      }).whenComplete(() => _changeViewState(ListPlaceState.Uploaded));
+    } else {
+      if (response[msg] != null) {
+        showSnackBar(response[err].toString());
+      }
+      _changeViewState(ListPlaceState.Idle);
     }
   }
 }

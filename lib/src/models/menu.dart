@@ -9,7 +9,6 @@ class MenuCategory extends HiveObject {
     required this.name,
     required this.items,
     this.isExpanded = false,
-    required this.foodPlaceId,
   });
 
   @HiveField(0)
@@ -18,15 +17,11 @@ class MenuCategory extends HiveObject {
 
   @HiveField(1)
   @JsonKey(name: 'Items')
-  final List<MenuItem> items;
+  final List<MenuItem>? items;
 
   @HiveField(2)
   @JsonKey(includeToJson: false, includeFromJson: false)
   bool isExpanded;
-
-  @HiveField(3)
-  @JsonKey(name: 'foodPlace')
-  final String foodPlaceId;
 
   factory MenuCategory.fromJson(Map<String, dynamic> json) =>
       _$MenuCategoryFromJson(json);
@@ -59,7 +54,7 @@ class MenuItem extends HiveObject {
   final String details;
 
   @HiveField(3)
-  @JsonKey(name: 'Name')
+  @JsonKey(name: 'Price')
   final int price;
 
   @HiveField(4)

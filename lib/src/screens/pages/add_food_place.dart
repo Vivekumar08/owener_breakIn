@@ -1,9 +1,11 @@
 import 'dart:io' show File;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../components/button.dart';
 import '../../components/dropdown.dart';
 import '../../components/input_field.dart';
+import '../../providers/providers.dart';
 import '../../router/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/loader.dart';
@@ -50,6 +52,8 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ListPlaceProvider>(context);
+    final locationProvider = Provider.of<LocationProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -61,54 +65,82 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
         padding: const EdgeInsets.fromLTRB(22.0, 8.0, 22.0, 22.0),
         child: Form(
           key: _formKey,
-          child: ListView(
-            physics: const ClampingScrollPhysics(),
-            padding: EdgeInsets.zero,
-            children: [
-              InputField(
-                  inputText: "Place Name*",
-                  hintText: "Enter Place Name",
-                  controller: place,
-                  validator: nullValidation),
-              InputField(
-                  inputText: "Address*",
-                  hintText: "Enter Address",
-                  controller: address,
-                  keyboardType: TextInputType.streetAddress,
-                  validator: nullValidation),
-              InputField(
-                  inputText: "Landmark",
-                  hintText: "Enter nearest Landmark (if applicable)",
-                  keyboardType: TextInputType.streetAddress,
-                  controller: landmark),
-              Dropdown(
-                  inputText: 'Category',
-                  items: categories,
-                  controller: category),
-              InputField(
-                  inputText: "Food Type*",
-                  hintText: "Ex. North Indian, Snacks",
-                  controller: type,
-                  validator: nullValidation),
-              const SizedBox(height: 16.0),
-              Text('Image*', style: Fonts.inputText),
-              const SizedBox(height: 4.0),
-              UploadFormButton(
-                  notifier: image,
-                  type: UploadButtonType.Image,
-                  validator: fileValidationWithSize()),
-              const SizedBox(height: 24.0),
-              Button(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      showLoader(context);
-                    }
-                  },
-                  buttonText: "Submit Details"),
-            ],
-          ),
+          child: MediaQuery.of(context).size.height > 800
+              ? _buildWidget(context, provider, locationProvider)
+              : SingleChildScrollView(
+                  child: _buildWidget(context, provider, locationProvider),
+                ),
         ),
       ),
+    );
+  }
+
+  Column _buildWidget(BuildContext context, ListPlaceProvider provider,
+      LocationProvider locationProvider) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            InputField(
+                inputText: "Place Name*",
+                hintText: "Enter Place Name",
+                controller: place,
+                validator: nullValidation),
+            InputField(
+                inputText: "Address*",
+                hintText: "Enter Address",
+                controller: address,
+                keyboardType: TextInputType.streetAddress,
+                validator: nullValidation),
+            InputField(
+                inputText: "Landmark",
+                hintText: "Enter nearest Landmark (if applicable)",
+                keyboardType: TextInputType.streetAddress,
+                controller: landmark),
+            InputField(
+                inputText: "Food Type*",
+                hintText: "Ex. North Indian, Snacks",
+                controller: type,
+                validator: nullValidation),
+            Dropdown(
+                inputText: 'Category', items: categories, controller: category),
+            const SizedBox(height: 16.0),
+            Text('Image*', style: Fonts.inputText),
+            const SizedBox(height: 4.0),
+            UploadFormButton(
+                notifier: image,
+                type: UploadButtonType.Image,
+                validator: fileValidationWithSize()),
+          ],
+        ),
+        const SizedBox(height: 16.0),
+        Button(
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                showLoader(context);
+                provider
+                    .addFoodPlace(
+                        name: place.text,
+                        type: type.text,
+                        category: category.text,
+                        lat: locationProvider.location!.lat.toString(),
+                        lng: locationProvider.location!.lng.toString(),
+                        address: address.text,
+                        landmark: landmark.text,
+                        image: image.value!)
+                    .whenComplete(
+                      () => provider.state.isUploaded()
+                          ? context.go(home)
+                          : context.pop(),
+                    );
+              } else {
+                setState(() {});
+              }
+            },
+            buttonText: "Submit Details"),
+      ],
     );
   }
 }

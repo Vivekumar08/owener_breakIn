@@ -48,11 +48,11 @@ class FoodPlaceModel extends HiveObject {
 
   @HiveField(7)
   @JsonKey(name: 'Menu')
-  final List<MenuItem> menu;
+  final List<MenuItem>? menu;
 
   @HiveField(8)
   @JsonKey(name: 'Ratings')
-  final double rating;
+  final double? rating;
 
   @HiveField(9)
   @JsonKey(name: 'RatedBy')

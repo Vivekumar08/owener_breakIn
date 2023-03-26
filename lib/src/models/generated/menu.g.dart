@@ -18,24 +18,21 @@ class MenuCategoryAdapter extends TypeAdapter<MenuCategory> {
     };
     return MenuCategory(
       name: fields[0] as String,
-      items: (fields[1] as List).cast<MenuItem>(),
+      items: (fields[1] as List?)?.cast<MenuItem>(),
       isExpanded: fields[2] as bool,
-      foodPlaceId: fields[3] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, MenuCategory obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
       ..write(obj.items)
       ..writeByte(2)
-      ..write(obj.isExpanded)
-      ..writeByte(3)
-      ..write(obj.foodPlaceId);
+      ..write(obj.isExpanded);
   }
 
   @override
@@ -104,24 +101,22 @@ class MenuItemAdapter extends TypeAdapter<MenuItem> {
 
 MenuCategory _$MenuCategoryFromJson(Map<String, dynamic> json) => MenuCategory(
       name: json['Name'] as String,
-      items: (json['Items'] as List<dynamic>)
-          .map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
+      items: (json['Items'] as List<dynamic>?)
+          ?.map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
           .toList(),
-      foodPlaceId: json['foodPlace'] as String,
     );
 
 Map<String, dynamic> _$MenuCategoryToJson(MenuCategory instance) =>
     <String, dynamic>{
       'Name': instance.name,
       'Items': instance.items,
-      'foodPlace': instance.foodPlaceId,
     };
 
 MenuItem _$MenuItemFromJson(Map<String, dynamic> json) => MenuItem(
       id: json['_id'] as String?,
       item: json['ItemName'] as String,
       details: json['Ingredients'] as String,
-      price: json['Name'] as int,
+      price: json['Price'] as int,
       isVeg: json['isVeg'] as bool,
       isAvailable: json['isAvailable'] as bool? ?? true,
     );
@@ -130,7 +125,7 @@ Map<String, dynamic> _$MenuItemToJson(MenuItem instance) => <String, dynamic>{
       '_id': instance.id,
       'ItemName': instance.item,
       'Ingredients': instance.details,
-      'Name': instance.price,
+      'Price': instance.price,
       'isVeg': instance.isVeg,
       'isAvailable': instance.isAvailable,
     };

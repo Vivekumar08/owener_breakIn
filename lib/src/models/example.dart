@@ -1,60 +1,68 @@
 Map<String, dynamic> menuComplete = {
-  'menuCategories': [
+  'Category': [
     {
-      'menuCategory': 'Thali (1)',
-      'menuItems': {
+      'Name': 'Thali (1)',
+      'Items': [
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
-      }
+      ]
     },
     {
-      'menuCategory': 'Lunch (1)',
-      'menuItems': [
+      'Name': 'Lunch (1)',
+      'Items': [
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
         {
-          'item': 'Indian Thali',
-          'itemDetails': 'Daal, Paneer, Rice, Salad, 2 Roti',
-          'price': 40,
+          'ItemName': 'Indian Thali',
+          'Ingredients': 'Daal, Paneer, Rice, Salad, 2 Roti',
+          'Price': 40,
           'isVeg': true,
+          'isAvailable': true,
         },
       ]
     },

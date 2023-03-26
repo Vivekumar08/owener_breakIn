@@ -1,9 +1,8 @@
 import 'package:geolocator/geolocator.dart';
-import '../../models/models.dart';
 
 class LocationService {
   /// Determine the current position of the device.
-  Future<Location> getLocationAsCoordinates() async {
+  Future<Position> getLocationAsCoordinates() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -27,10 +26,8 @@ class LocationService {
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
 
-        Position? p = await Geolocator.getLastKnownPosition();
-        if (p != null) {
-          return Location(lat: p.latitude, lng: p.longitude, address: '');
-        }
+        Position? position = await Geolocator.getLastKnownPosition();
+        if (position != null) return position;
 
         return Future.error('DENIED');
       }
@@ -42,8 +39,8 @@ class LocationService {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    Position p = await Geolocator.getCurrentPosition();
-    return Location(lat: p.latitude, lng: p.longitude, address: '');
+    Position position = await Geolocator.getCurrentPosition();
+    return position;
   }
 
   Future<void> openLocationSettings() async =>

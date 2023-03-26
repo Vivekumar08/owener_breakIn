@@ -60,4 +60,36 @@ class ListPlaceService {
     }
     return body;
   }
+
+  Future<Map<String, dynamic>> addFoodPlace(
+      Map<String, String> fields, String token, File image) async {
+    Map<String, dynamic> body = {};
+
+    try {
+      http.MultipartRequest request =
+          http.MultipartRequest('POST', Uri.parse('$resUrl/add/foodPlace'));
+      request.headers[HttpHeaders.authorizationHeader] = token;
+      request.headers[HttpHeaders.contentTypeHeader] = 'multipart/form-data';
+
+      final file = http.MultipartFile.fromBytes(
+          'file', await image.readAsBytes(),
+          filename: image.path.split('/').last);
+      request.files.add(file);
+
+      request.fields.addAll(fields);
+
+      http.StreamedResponse response = await request.send();
+
+      Uint8List responseData = await response.stream.toBytes();
+      body = jsonDecode(String.fromCharCodes(responseData));
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
 }

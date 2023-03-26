@@ -24,7 +24,7 @@ class FoodPlaceModelAdapter extends TypeAdapter<FoodPlaceModel> {
       foodType: fields[4] as String,
       image: fields[5] as String,
       location: fields[6] as Location,
-      menu: (fields[7] as List?)?.cast<MenuItem>(),
+      menu: (fields[7] as List?)?.cast<MenuCategory>(),
       rating: fields[8] as double?,
       ratedBy: fields[9] as int,
     );
@@ -178,7 +178,7 @@ FoodPlaceModel _$FoodPlaceModelFromJson(Map<String, dynamic> json) =>
       image: json['CoverPhoto'] as String,
       location: Location.fromJson(json['Locations'] as Map<String, dynamic>),
       menu: (json['Menu'] as List<dynamic>?)
-          ?.map((e) => MenuItem.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => MenuCategory.fromJson(e as Map<String, dynamic>))
           .toList(),
       rating: (json['Ratings'] as num?)?.toDouble(),
       ratedBy: json['RatedBy'] as int,

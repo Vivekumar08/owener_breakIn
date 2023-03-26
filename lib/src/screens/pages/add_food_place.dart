@@ -68,6 +68,8 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
           child: MediaQuery.of(context).size.height > 800
               ? _buildWidget(context, provider, locationProvider)
               : SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  padding: EdgeInsets.zero,
                   child: _buildWidget(context, provider, locationProvider),
                 ),
         ),

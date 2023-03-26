@@ -29,7 +29,7 @@ class FoodPlaceModel extends HiveObject {
   final String name;
 
   @HiveField(2)
-  final bool status;
+  bool status;
 
   @HiveField(3)
   final FoodPlaceCategory category;
@@ -40,7 +40,7 @@ class FoodPlaceModel extends HiveObject {
 
   @HiveField(5)
   @JsonKey(name: 'CoverPhoto')
-  final String image;
+  String image;
 
   @HiveField(6)
   @JsonKey(name: 'Locations')
@@ -48,15 +48,15 @@ class FoodPlaceModel extends HiveObject {
 
   @HiveField(7)
   @JsonKey(name: 'Menu')
-  final List<MenuItem>? menu;
+  List<MenuCategory>? menu;
 
   @HiveField(8)
   @JsonKey(name: 'Ratings')
-  final double? rating;
+  double? rating;
 
   @HiveField(9)
   @JsonKey(name: 'RatedBy')
-  final int ratedBy;
+  int ratedBy;
 
   factory FoodPlaceModel.fromJson(Map<String, dynamic> json) =>
       _$FoodPlaceModelFromJson(json);

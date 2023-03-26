@@ -145,10 +145,9 @@ class _UploadFormButtonState extends FormFieldState<File?> {}
 // ignore: constant_identifier_names
 enum UploadButtonType { Custom, Pdf, Image }
 
-// ignore: must_be_immutable
 class UploadButton extends StatefulWidget {
   /// Size limit is in kiloBytes (default 1000 kb)
-  UploadButton({
+  const UploadButton({
     super.key,
     required this.notifier,
     this.type = UploadButtonType.Custom,
@@ -156,10 +155,10 @@ class UploadButton extends StatefulWidget {
     this.autovalidateMode,
   });
 
-  ValueNotifier<File?> notifier;
-  UploadButtonType type;
-  FormFieldState<File?>? state;
-  AutovalidateMode? autovalidateMode;
+  final ValueNotifier<File?> notifier;
+  final UploadButtonType type;
+  final FormFieldState<File?>? state;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   State<UploadButton> createState() => _UploadButtonState();

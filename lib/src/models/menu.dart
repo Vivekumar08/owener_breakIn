@@ -17,7 +17,7 @@ class MenuCategory extends HiveObject {
 
   @HiveField(1)
   @JsonKey(name: 'Items')
-  final List<MenuItem>? items;
+  List<MenuItem>? items;
 
   @HiveField(2)
   @JsonKey(includeToJson: false, includeFromJson: false)
@@ -61,7 +61,7 @@ class MenuItem extends HiveObject {
   final bool isVeg;
 
   @HiveField(5)
-  final bool isAvailable;
+  bool isAvailable;
 
   factory MenuItem.fromJson(Map<String, dynamic> json) =>
       _$MenuItemFromJson(json);

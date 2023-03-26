@@ -40,6 +40,7 @@ class _ListPlaceState extends State<ListPlace> {
   Widget build(BuildContext context) {
     final provider = Provider.of<ListPlaceProvider>(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: true,
         leadingWidth: 72.0,

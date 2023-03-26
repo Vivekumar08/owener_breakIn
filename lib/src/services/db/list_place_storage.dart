@@ -26,7 +26,7 @@ class ListPlaceStorage {
     storage.put(key, listPlaceModel);
   }
 
-  // Add listPlaceModel
+  // Get listPlaceModel
   ListPlaceModel? getListPlace() {
     dynamic data = storage.get(key);
     if (data is ListPlaceModel) {

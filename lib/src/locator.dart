@@ -19,6 +19,10 @@ setup() {
       () async => await OwnerStorage.init());
   locator.registerLazySingletonAsync<ListPlaceStorage>(
       () async => await ListPlaceStorage.init());
+  locator.registerLazySingletonAsync<FoodPlaceStorage>(
+      () async => await FoodPlaceStorage.init());
+  locator.registerLazySingletonAsync<MenuStorage>(() async =>
+      await MenuStorage.init(await locator.getAsync<FoodPlaceStorage>()));
 
   // Location Service
   locator.registerLazySingleton<LocationService>(() => LocationService());

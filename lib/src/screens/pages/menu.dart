@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../components/accordion.dart';
@@ -10,46 +10,58 @@ import '../../style/fonts.dart';
 import '../../style/palette.dart';
 import '../../utils/images.dart';
 import '../../utils/symbols.dart';
+import '../../utils/validators.dart';
 
-class Menu extends StatelessWidget {
+class Menu extends StatefulWidget {
   const Menu({super.key});
 
   @override
+  State<Menu> createState() => _MenuState();
+}
+
+class _MenuState extends State<Menu> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Palette.white, size: 19.0),
-        leadingWidth: 72.0,
-        title: Text("The Burger Club",
-            style: Fonts.appBarTitle.copyWith(color: Palette.white)),
-        actions: [
-          PopupMenuButton(
-            padding: EdgeInsets.zero,
-            icon: Icon(Icons.more_vert_outlined, color: Palette.white),
-            itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-              PopupMenuItem(
-                height: 40.0,
-                onTap: () => context.go(coverImage),
-                child: const Text('Change Cover Image'),
-              ),
-            ],
-          )
-        ],
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Palette.iconsCol,
+        child: const Icon(Icons.add, size: 32.0),
+        onPressed: () => context.go(addNewItem),
       ),
-      body: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Palette.iconsCol,
-          child: const Icon(Icons.add, size: 32.0),
-          onPressed: () => context.go(addNewItem),
-        ),
-        body: SingleChildScrollView(
+      body: SafeArea(
+        top: Platform.isAndroid,
+        child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           child: Column(
             children: [
-              Images.menu,
+              Stack(
+                children: [
+                  Images.menu,
+                  AppBar(
+                    automaticallyImplyLeading: true,
+                    backgroundColor: Colors.transparent,
+                    iconTheme: IconThemeData(color: Palette.white, size: 19.0),
+                    leadingWidth: 72.0,
+                    title: Text("The Burger Club",
+                        style:
+                            Fonts.appBarTitle.copyWith(color: Palette.white)),
+                    actions: [
+                      PopupMenuButton(
+                        padding: EdgeInsets.zero,
+                        icon: Icon(Icons.more_vert_outlined,
+                            color: Palette.white),
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+                          PopupMenuItem(
+                            height: 40.0,
+                            onTap: () => context.go(coverImage),
+                            child: const Text('Change Cover Image'),
+                          ),
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
               const SizedBox(height: 8.0),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 22.0),
@@ -108,6 +120,7 @@ class CoverImage extends StatefulWidget {
 
 class _CoverImageState extends State<CoverImage> {
   ValueNotifier<File?> coverImage = ValueNotifier(null);
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -131,13 +144,25 @@ class _CoverImageState extends State<CoverImage> {
           children: [
             Text('Cover Image', style: Fonts.inputText),
             const SizedBox(height: 4.0),
-            UploadButton(notifier: coverImage, type: UploadButtonType.Image),
+            Form(
+                key: _formKey,
+                child: UploadFormButton(
+                  notifier: coverImage,
+                  type: UploadButtonType.Image,
+                  validator: fileValidationWithSize(),
+                )),
             const Spacer(),
             ValueListenableBuilder<File?>(
-                valueListenable: coverImage,
-                builder: (_, file, widget) => Button(
-                    buttonText: 'Save Changes',
-                    onPressed: file != null ? () {} : null))
+              valueListenable: coverImage,
+              builder: (_, file, widget) => Button(
+                buttonText: 'Save Changes',
+                onPressed: file == null
+                    ? null
+                    : () {
+                        if (_formKey.currentState!.validate()) {}
+                      },
+              ),
+            )
           ],
         ),
       ),

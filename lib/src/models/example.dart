@@ -34,7 +34,7 @@ Map<String, dynamic> menuComplete = {
       ]
     },
     {
-      'Name': 'Lunch (1)',
+      'Name': 'Lunch (2)',
       'Items': [
         {
           'ItemName': 'Indian Thali',

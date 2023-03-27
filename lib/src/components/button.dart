@@ -123,17 +123,32 @@ class UploadFormButton extends FormField<File?> {
       {super.key,
       required ValueNotifier<File?> notifier,
       UploadButtonType type = UploadButtonType.Custom,
-      AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
+      AutovalidateMode? autovalidateMode,
+      void Function(File?)? onChanged,
       super.validator})
       : super(
           initialValue: notifier.value,
-          autovalidateMode: autovalidateMode,
-          builder: (state) => UploadButton(
-            notifier: notifier,
-            type: type,
-            state: state,
-            autovalidateMode: autovalidateMode,
-          ),
+          autovalidateMode: autovalidateMode ?? AutovalidateMode.disabled,
+          builder: (state) {
+            final BoxBorder? border = state.hasError
+                ? Border.all(color: Theme.of(state.context).colorScheme.error)
+                : null;
+
+            void onChangedHandler(File? value) {
+              state.didChange(value);
+              if (onChanged != null) {
+                onChanged(value);
+              }
+            }
+
+            return UploadButton(
+              notifier: notifier,
+              type: type,
+              border: border,
+              onChanged: onChangedHandler,
+              errorText: state.errorText,
+            );
+          },
         );
 
   @override
@@ -151,14 +166,16 @@ class UploadButton extends StatefulWidget {
     super.key,
     required this.notifier,
     this.type = UploadButtonType.Custom,
-    this.state,
-    this.autovalidateMode,
+    this.border,
+    this.onChanged,
+    this.errorText,
   });
 
   final ValueNotifier<File?> notifier;
   final UploadButtonType type;
-  final FormFieldState<File?>? state;
-  final AutovalidateMode? autovalidateMode;
+  final BoxBorder? border;
+  final void Function(File?)? onChanged;
+  final String? errorText;
 
   @override
   State<UploadButton> createState() => _UploadButtonState();
@@ -178,17 +195,9 @@ class _UploadButtonState extends State<UploadButton> {
       if (result != null) {
         File file = File(result.files.single.path!);
         widget.notifier.value = file;
-        changeFormState(file);
+        widget.onChanged?.call(file);
       } else {}
     } catch (_) {}
-  }
-
-  void changeFormState(File? file) {
-    widget.autovalidateMode == AutovalidateMode.always
-        ? widget.state?.didChange(file)
-        : widget.autovalidateMode == AutovalidateMode.onUserInteraction
-            ? widget.state?.setValue(file)
-            : null;
   }
 
   Widget render(File file) {
@@ -196,6 +205,7 @@ class _UploadButtonState extends State<UploadButton> {
     if (mimeType != null && mimeType.split("/").first == 'image') {
       return SizedBox(height: 80, width: 80, child: Image.file(file));
     }
+
     return Stack(
       children: [
         Icon(Icons.insert_drive_file, color: Palette.greyNormal, size: 80),
@@ -231,7 +241,6 @@ class _UploadButtonState extends State<UploadButton> {
                           try {
                             widget.notifier.value?.deleteSync();
                             widget.notifier.value = null;
-                            changeFormState(null);
                           } catch (_) {}
                         },
                         child: const Icon(Icons.circle_outlined, size: 16.0),
@@ -264,10 +273,7 @@ class _UploadButtonState extends State<UploadButton> {
                       decoration: BoxDecoration(
                         color: Palette.stroke,
                         borderRadius: BorderRadius.circular(8.0),
-                        border: widget.state != null && widget.state!.hasError
-                            ? Border.all(
-                                color: Theme.of(context).colorScheme.error)
-                            : null,
+                        border: widget.border,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -293,20 +299,18 @@ class _UploadButtonState extends State<UploadButton> {
                       ),
                     ),
                   ),
-            widget.state == null
+            widget.errorText == null
                 ? Container()
-                : widget.state!.hasError && widget.state?.errorText != null
-                    ? Padding(
-                        padding: const EdgeInsets.fromLTRB(16.0, 7.0, 0, 0),
-                        child: Text(
-                          widget.state!.errorText!,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontSize: 12,
-                          ),
-                        ),
-                      )
-                    : Container()
+                : Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 7.0, 0, 0),
+                    child: Text(
+                      widget.errorText!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 12,
+                      ),
+                    ),
+                  )
           ],
         );
       },

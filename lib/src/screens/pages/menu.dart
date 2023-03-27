@@ -156,11 +156,11 @@ class _CoverImageState extends State<CoverImage> {
               valueListenable: coverImage,
               builder: (_, file, widget) => Button(
                 buttonText: 'Save Changes',
-                onPressed: file == null
-                    ? null
-                    : () {
-                        if (_formKey.currentState!.validate()) {}
-                      },
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    print('validated');
+                  }
+                },
               ),
             )
           ],

@@ -58,7 +58,7 @@ String? passwordValidation(String? input) {
 // limit (in kb)
 String? Function(File?)? fileValidationWithSize({int limit = 1000}) {
   return (File? file) {
-    if (file == null || file.lengthSync() == 0) {
+    if (file == null || !file.existsSync() || file.lengthSync() == 0) {
       return 'Field is required';
     } else if (file.lengthSync() > limit * 1000) {
       if (limit >= 1000) {

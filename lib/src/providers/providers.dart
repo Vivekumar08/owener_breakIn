@@ -1,6 +1,7 @@
 library providers;
 
 export 'auth_provider.dart';
+export 'food_place_provider.dart';
 export 'list_place_provider.dart';
 export 'location_provider.dart';
 export 'otp_provider.dart';

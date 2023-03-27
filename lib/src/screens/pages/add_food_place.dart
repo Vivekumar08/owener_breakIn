@@ -52,7 +52,7 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ListPlaceProvider>(context);
+    final provider = Provider.of<FoodPlaceProvider>(context);
     final locationProvider = Provider.of<LocationProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -77,7 +77,7 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
     );
   }
 
-  Column _buildWidget(BuildContext context, ListPlaceProvider provider,
+  Column _buildWidget(BuildContext context, FoodPlaceProvider provider,
       LocationProvider locationProvider) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

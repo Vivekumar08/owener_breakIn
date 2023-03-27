@@ -5,20 +5,20 @@ import 'dart:typed_data' show Uint8List;
 import 'package:http/http.dart' as http;
 import '../constants.dart';
 
-class ListPlaceService {
-  Future<Map<String, dynamic>> listPlace(
-      Map<String, String> fields, String token, File document) async {
+class FoodPlaceService {
+  Future<Map<String, dynamic>> addFoodPlace(
+      Map<String, String> fields, String token, File image) async {
     Map<String, dynamic> body = {};
 
     try {
       http.MultipartRequest request =
-          http.MultipartRequest('POST', Uri.parse('$resUrl/listPlace'));
+          http.MultipartRequest('POST', Uri.parse('$resUrl/add/foodPlace'));
       request.headers[HttpHeaders.authorizationHeader] = token;
       request.headers[HttpHeaders.contentTypeHeader] = 'multipart/form-data';
 
       final file = http.MultipartFile.fromBytes(
-          'file', await document.readAsBytes(),
-          filename: document.path.split('/').last);
+          'file', await image.readAsBytes(),
+          filename: image.path.split('/').last);
       request.files.add(file);
 
       request.fields.addAll(fields);
@@ -38,16 +38,16 @@ class ListPlaceService {
     return body;
   }
 
-  Future<Map<String, dynamic>> getListPlace(String token) async {
+  Future<Map<String, dynamic>> getFoodPlace(String token) async {
     Map<String, dynamic> body = {};
     try {
       http.Response response = await http.get(
-        Uri.parse('$resUrl/listPlace/get'),
+        Uri.parse('$resUrl//get/foodPlace'),
         headers: <String, String>{
           HttpHeaders.authorizationHeader: token,
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(listPlaceTimeout);
+      ).timeout(foodPlaceTimeout);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});

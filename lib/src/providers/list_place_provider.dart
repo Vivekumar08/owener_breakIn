@@ -1,4 +1,3 @@
-import 'dart:io' show File;
 import 'package:flutter/foundation.dart';
 import 'constants.dart';
 import '../locator.dart';
@@ -7,7 +6,7 @@ import '../services/api/api.dart';
 import '../services/db/db.dart';
 import '../style/snack_bar.dart';
 
-// AuthProvider Constants
+// ListPlaceProvider Constants
 // ignore: constant_identifier_names
 enum ListPlaceState { Idle, Uploading, Uploaded }
 
@@ -22,7 +21,7 @@ class ListPlaceProvider {
   ListPlaceModel? _listPlaceModel;
   ListPlaceModel? get listPlaceModel => _listPlaceModel;
 
-  void _changeViewState(ListPlaceState state) => _state = state;
+  void _changeState(ListPlaceState state) => _state = state;
 
   ListPlaceProvider();
 
@@ -33,7 +32,7 @@ class ListPlaceProvider {
   }
 
   Future<void> listPlace(ListPlaceModel listPlace) async {
-    _changeViewState(ListPlaceState.Uploading);
+    _changeState(ListPlaceState.Uploading);
     String? token = await locator.get<TokenStorage>().getToken();
     Map<String, dynamic> response =
         await locator.get<ListPlaceService>().listPlace({
@@ -43,12 +42,12 @@ class ListPlaceProvider {
     }, token!, listPlace.document);
 
     if (response[code] == 200) {
-      _changeViewState(ListPlaceState.Uploaded);
+      _changeState(ListPlaceState.Uploaded);
     } else {
       if (response[msg] != null) {
         showSnackBar(response[err].toString());
       }
-      _changeViewState(ListPlaceState.Idle);
+      _changeState(ListPlaceState.Idle);
     }
   }
 
@@ -75,44 +74,6 @@ class ListPlaceProvider {
       }
     } else {
       debugPrint(response.toString());
-    }
-  }
-
-  Future<void> addFoodPlace({
-    required String name,
-    required String type,
-    required String category,
-    required String lat,
-    required String lng,
-    required String address,
-    required String landmark,
-    required File image,
-  }) async {
-    _changeViewState(ListPlaceState.Uploading);
-    String? token = await locator.get<TokenStorage>().getToken();
-    Map<String, dynamic> response =
-        await locator.get<ListPlaceService>().addFoodPlace({
-      "FoodPlaceName": name,
-      "type": type,
-      "category": category,
-      "lat": lat,
-      "lng": lng,
-      "address": address,
-      "landmark": landmark,
-    }, token!, image);
-
-    print(response);
-
-    if (response[code] == 200) {
-      await locator.isReady<ListPlaceStorage>();
-      await locator.get<ListPlaceStorage>().updateListPlaceDetails({
-        foodPlace: response[foodPlace][foodPlaceId]
-      }).whenComplete(() => _changeViewState(ListPlaceState.Uploaded));
-    } else {
-      if (response[msg] != null) {
-        showSnackBar(response[err].toString());
-      }
-      _changeViewState(ListPlaceState.Idle);
     }
   }
 }

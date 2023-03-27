@@ -32,6 +32,8 @@ class ProfileProvider {
     locator.get<OwnerStorage>().deleteOwner();
     await locator.isReady<ListPlaceStorage>();
     locator.get<ListPlaceStorage>().deletelistPlace();
+    await locator.isReady<FoodPlaceStorage>();
+    locator.get<FoodPlaceStorage>().deleteFoodPlace();
     debugPrint('logged Out Successfully');
   }
 

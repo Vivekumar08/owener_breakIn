@@ -36,6 +36,12 @@ class MyApp extends StatelessWidget {
           create: (context) => ListPlaceProvider(),
           update: (_, token, __) => ListPlaceProvider.init(token.tokenExists),
         ),
+        ChangeNotifierProxyProvider2<TokenProvider, ListPlaceProvider,
+            FoodPlaceProvider>(
+          create: (context) => FoodPlaceProvider(),
+          update: (_, token, listPlace, __) => FoodPlaceProvider.init(
+              token.tokenExists, listPlace.listPlaceModel),
+        ),
         ChangeNotifierProvider(create: (context) => LocationProvider.init()),
       ],
       child: MaterialApp.router(

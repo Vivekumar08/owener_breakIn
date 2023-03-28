@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:geolocator/geolocator.dart';
 import '../services/location/location.dart';
 import '../locator.dart';
 import '../models/models.dart';
@@ -12,6 +11,7 @@ extension LocationExtension on LocationState {
   bool detected() => this == LocationState.Detected ? true : false;
   bool manual() => this == LocationState.Manual ? true : false;
   bool denied() => this == LocationState.Denied ? true : false;
+  bool uninitialized() => this == LocationState.Uninitialized ? true : false;
 }
 
 class LocationProvider extends ChangeNotifier {
@@ -27,14 +27,10 @@ class LocationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getLatLng() async {
+  Future<void> getLocation() async {
     _changeLocationState(LocationState.Detecting);
     try {
-      Position position =
-          await locator.get<LocationService>().getLocationAsCoordinates();
-
-      location = Location(
-          lat: position.latitude, lng: position.longitude, address: '');
+      location = await locator.get<LocationService>().getLocation();
       _changeLocationState(LocationState.Detected);
     } catch (e) {
       switch (e) {
@@ -43,6 +39,22 @@ class LocationProvider extends ChangeNotifier {
           break;
         case 'DENIED_FOREVER':
           _changeLocationState(LocationState.Denied);
+          break;
+        default:
+      }
+    }
+  }
+
+  Future<void> getLocationFromAddress(String address) async {
+    _changeLocationState(LocationState.Detecting);
+    try {
+      location =
+          await locator.get<LocationService>().getLocationFromAddress(address);
+      _changeLocationState(LocationState.Detected);
+    } catch (e) {
+      switch (e) {
+        case 'ADDRESS_NOT_FOUND':
+          _changeLocationState(LocationState.Uninitialized);
           break;
         default:
       }

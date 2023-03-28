@@ -91,7 +91,7 @@ class FoodPlaceProvider extends ChangeNotifier {
         foodPlace: response[foodPlace][foodPlaceId]
       }).whenComplete(() => _changeState(FoodPlaceState.Uploaded));
     } else {
-      if (response[msg] != null) {
+      if (response[err] != null) {
         showSnackBar(response[err].toString());
       }
       _changeState(FoodPlaceState.Idle);

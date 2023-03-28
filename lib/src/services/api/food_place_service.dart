@@ -42,7 +42,7 @@ class FoodPlaceService {
     Map<String, dynamic> body = {};
     try {
       http.Response response = await http.get(
-        Uri.parse('$resUrl//get/foodPlace'),
+        Uri.parse('$resUrl/get/foodPlace'),
         headers: <String, String>{
           HttpHeaders.authorizationHeader: token,
           'Content-Type': 'application/json; charset=UTF-8',

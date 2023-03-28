@@ -8,7 +8,7 @@ Duration authTimeout = const Duration(seconds: 5);
 Duration otpTimeout = const Duration(seconds: 10);
 Duration settingsTimeout = const Duration(seconds: 5);
 Duration listPlaceTimeout = const Duration(seconds: 5);
-Duration foodPlaceTimeout = const Duration(seconds: 5);
+Duration foodPlaceTimeout = const Duration(seconds: 10);
 
 void noInternet() => showSnackBar('No Internet');
 void timeOut() => showSnackBar('Timeout');

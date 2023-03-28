@@ -133,10 +133,13 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
                         landmark: landmark.text,
                         image: image.value!)
                     .whenComplete(
-                      () => provider.state.isUploaded()
-                          ? context.go(home)
-                          : context.pop(),
-                    );
+                  () {
+                    context.read<ListPlaceProvider>().getListPlace();
+                    provider.state.isUploaded()
+                        ? context.go(home)
+                        : context.pop();
+                  },
+                );
               } else {
                 setState(() {});
               }

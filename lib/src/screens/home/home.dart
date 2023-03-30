@@ -22,10 +22,9 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    final provider = Provider.of<ListPlaceProvider>(context, listen: false);
-    provider
-        .getListPlace()
-        .whenComplete(() => _buildMessage(provider.listPlaceModel?.status));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _buildMessage(context.read<ListPlaceProvider>().listPlaceModel?.status);
+    });
     super.initState();
   }
 
@@ -36,27 +35,22 @@ class _HomeState extends State<Home> {
   }
 
   void _buildMessage(ListPlaceStatus? status) {
-    if (status == null) {
-      context.go(listPlace);
-    } else {
-      setState(() {});
-      if (status == ListPlaceStatus.verifying) {
-        showMessageDialog(dismissible: false, context: context, children: [
-          Text(
-            'Your Document have been submitted successfully . As soon '
-            'as our team verifies your credentials, we will contact you.',
-            style: Fonts.simText,
-          )
-        ]);
-      } else if (status == ListPlaceStatus.unverified) {
-        showMessageDialog(dismissible: false, context: context, children: [
-          Text(
-            'For certain issues, you haven\'t been verified. '
-            'For further concerns, you can contact us.',
-            style: Fonts.simText,
-          )
-        ]);
-      }
+    if (status == ListPlaceStatus.verifying) {
+      showMessageDialog(dismissible: false, context: context, children: [
+        Text(
+          'Your Document have been submitted successfully . As soon '
+          'as our team verifies your credentials, we will contact you.',
+          style: Fonts.simText,
+        )
+      ]);
+    } else if (status == ListPlaceStatus.unverified) {
+      showMessageDialog(dismissible: false, context: context, children: [
+        Text(
+          'For certain issues, you haven\'t been verified. '
+          'For further concerns, you can contact us.',
+          style: Fonts.simText,
+        )
+      ]);
     }
   }
 
@@ -109,39 +103,43 @@ class _HomeState extends State<Home> {
             const SizedBox(width: 8.0),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 22.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  model != null
-                      ? Text(
-                          model.placeName,
-                          style: Fonts.otpText.copyWith(fontSize: 14.0),
-                        )
-                      : Container(),
-                  SizedBox(
-                    height: 20.0,
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: ToggleButton(notifier: notifier),
+        body: AbsorbPointer(
+          absorbing: model == null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    model != null
+                        ? Text(
+                            model.placeName,
+                            style: Fonts.otpText.copyWith(fontSize: 14.0),
+                          )
+                        : Container(),
+                    SizedBox(
+                      height: 20.0,
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: ToggleButton(notifier: notifier),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildOptions(Images.mMenu, 'Manage Menu',
-                      model?.foodPlaceId == null ? addFoodPlace : menu),
-                  _buildOptions(Images.insights, 'Customer Insights', insights)
-                ],
-              )
-            ],
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildOptions(Images.mMenu, 'Manage Menu',
+                        model?.foodPlaceId == null ? addFoodPlace : menu),
+                    _buildOptions(
+                        Images.insights, 'Customer Insights', insights)
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       );

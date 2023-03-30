@@ -48,7 +48,7 @@ class FoodPlaceModel extends HiveObject {
 
   @HiveField(7)
   @JsonKey(name: 'Menu')
-  List<MenuCategory>? menu;
+  List<MenuCategory> menu;
 
   @HiveField(8)
   @JsonKey(name: 'Ratings')

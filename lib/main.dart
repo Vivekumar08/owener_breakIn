@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
             update: (_, token, auth, __) => OwnerProvider.fromProvider(
                 token.tokenExists, auth.state.isAuthenticated())),
         Provider<ProfileProvider>(create: (context) => ProfileProvider()),
-        ProxyProvider<TokenProvider, ListPlaceProvider>(
+        ChangeNotifierProxyProvider<TokenProvider, ListPlaceProvider>(
           create: (context) => ListPlaceProvider(),
           update: (_, token, __) => ListPlaceProvider.init(token.tokenExists),
         ),

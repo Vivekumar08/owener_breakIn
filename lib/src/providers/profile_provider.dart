@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'constants.dart';
 import '../locator.dart';
 import '../services/api/api.dart';
@@ -34,6 +35,7 @@ class ProfileProvider {
     locator.get<ListPlaceStorage>().deletelistPlace();
     await locator.isReady<FoodPlaceStorage>();
     locator.get<FoodPlaceStorage>().deleteFoodPlace();
+    PaintingBinding.instance.imageCache.clear();
     debugPrint('logged Out Successfully');
   }
 

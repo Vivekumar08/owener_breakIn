@@ -122,7 +122,7 @@ class UploadFormButton extends FormField<File?> {
   UploadFormButton(
       {super.key,
       required ValueNotifier<File?> notifier,
-      UploadButtonType type = UploadButtonType.Custom,
+      UploadButtonType? type,
       AutovalidateMode? autovalidateMode,
       void Function(File?)? onChanged,
       super.validator})
@@ -158,7 +158,7 @@ class UploadFormButton extends FormField<File?> {
 class _UploadFormButtonState extends FormFieldState<File?> {}
 
 // ignore: constant_identifier_names
-enum UploadButtonType { Custom, Pdf, Image }
+enum UploadButtonType { Custom, Doc, Image }
 
 class UploadButton extends StatefulWidget {
   /// Size limit is in kiloBytes (default 1000 kb)
@@ -172,7 +172,7 @@ class UploadButton extends StatefulWidget {
   });
 
   final ValueNotifier<File?> notifier;
-  final UploadButtonType type;
+  final UploadButtonType? type;
   final BoxBorder? border;
   final void Function(File?)? onChanged;
   final String? errorText;
@@ -248,7 +248,7 @@ class _UploadButtonState extends State<UploadButton> {
                     )
                   ])
                 : GestureDetector(
-                    onTap: () => widget.type == UploadButtonType.Pdf
+                    onTap: () => widget.type == UploadButtonType.Doc
                         ? uploadFile()
                         : widget.type == UploadButtonType.Image
                             ? uploadFile(gallery: true)

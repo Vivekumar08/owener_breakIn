@@ -1,8 +1,9 @@
 import 'dart:async' show TimeoutException;
-import 'dart:convert' show jsonDecode;
+import 'dart:convert' show jsonDecode, jsonEncode;
 import 'dart:io' show File, HttpHeaders, SocketException;
 import 'dart:typed_data' show Uint8List;
 import 'package:http/http.dart' as http;
+import '../../models/menu.dart';
 import '../constants.dart';
 
 class FoodPlaceService {
@@ -47,7 +48,59 @@ class FoodPlaceService {
           HttpHeaders.authorizationHeader: token,
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(foodPlaceTimeout);
+      ).timeout(duration_10);
+
+      body = jsonDecode(response.body);
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
+
+  Future<Map<String, dynamic>> addMenuCategory(
+      String token, String category) async {
+    Map<String, dynamic> body = {};
+    try {
+      http.Response response = await http.post(
+        Uri.parse('$resUrl/add/MenuItems/Category'),
+        body: jsonEncode({"Category": category}),
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(duration_5);
+
+      body = jsonDecode(response.body);
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
+
+  Future<Map<String, dynamic>> addMenuItem(
+      String token, String category, MenuItem item) async {
+    Map<String, dynamic> body = {};
+    Map<String, dynamic> fields = item.toJson();
+    fields.addAll({'Category': category});
+    try {
+      http.Response response = await http.post(
+        Uri.parse('$resUrl/add/MenuItems'),
+        body: jsonEncode(fields),
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(duration_5);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});

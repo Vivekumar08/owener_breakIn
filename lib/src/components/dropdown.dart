@@ -7,11 +7,13 @@ class Dropdown extends StatefulWidget {
       {super.key,
       required this.inputText,
       required this.items,
-      required this.controller});
+      required this.controller,
+      this.validator});
 
   final String inputText;
   final List<String> items;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
   @override
   State<Dropdown> createState() => _DropdownState();
@@ -36,6 +38,7 @@ class _DropdownState extends State<Dropdown> {
             value: dropdownValue,
             menuMaxHeight: 280,
             style: Fonts.inputText.copyWith(color: Palette.text),
+            validator: widget.validator,
             decoration: InputDecoration(
               filled: true,
               fillColor: Palette.inputField,

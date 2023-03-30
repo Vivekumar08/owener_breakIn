@@ -58,10 +58,13 @@ class MenuItem extends HiveObject {
   final int price;
 
   @HiveField(4)
+  @JsonKey(toJson: _toJson)
   final bool isVeg;
 
   @HiveField(5)
   bool isAvailable;
+
+  static String _toJson(var value) => value.toString();
 
   factory MenuItem.fromJson(Map<String, dynamic> json) =>
       _$MenuItemFromJson(json);

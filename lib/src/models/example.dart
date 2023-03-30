@@ -6,7 +6,7 @@ Map<String, dynamic> menuExample = {
   "status": true,
   "type": "North Indian",
   "category": "Canteen",
-  "CoverPhoto": "1679859083559_logo.png",
+  "CoverPhoto": "",
   "mimetype": "application/octet-stream",
   "Menu": [
     {"Name": "Category 1", "Items": []},

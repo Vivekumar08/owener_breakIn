@@ -126,6 +126,6 @@ Map<String, dynamic> _$MenuItemToJson(MenuItem instance) => <String, dynamic>{
       'ItemName': instance.item,
       'Ingredients': instance.details,
       'Price': instance.price,
-      'isVeg': instance.isVeg,
+      'isVeg': MenuItem._toJson(instance.isVeg),
       'isAvailable': instance.isAvailable,
     };

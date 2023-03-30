@@ -32,6 +32,16 @@ String? noSpecialCharacterValidation(String? input) {
   return null;
 }
 
+// Number Validation
+String? numberValidation(String? input) {
+  if (input == null || input.trim().isEmpty) {
+    return 'Field is required';
+  } else if (RegExp(r'^[0-9]*$').hasMatch(input)) {
+    return null;
+  }
+  return 'Invalid Input';
+}
+
 // Null Validation
 String? nullValidation(String? input) {
   if (input == null || input.trim().isEmpty) {

@@ -16,7 +16,7 @@ class OwnerService {
           HttpHeaders.authorizationHeader: token,
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(authTimeout);
+      ).timeout(duration_5);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});

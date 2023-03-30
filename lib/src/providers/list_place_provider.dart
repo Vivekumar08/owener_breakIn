@@ -8,20 +8,23 @@ import '../style/snack_bar.dart';
 
 // ListPlaceProvider Constants
 // ignore: constant_identifier_names
-enum ListPlaceState { Idle, Uploading, Uploaded }
+enum ListPlaceState { Idle, Busy, Uploading, Uploaded }
 
 extension ListPlaceExtension on ListPlaceState {
   bool isUploaded() => this == ListPlaceState.Uploaded ? true : false;
+  bool isIdle() => this == ListPlaceState.Idle ? true : false;
 }
 
-class ListPlaceProvider {
+class ListPlaceProvider extends ChangeNotifier {
   ListPlaceState _state = ListPlaceState.Idle;
   ListPlaceState get state => _state;
 
   ListPlaceModel? _listPlaceModel;
   ListPlaceModel? get listPlaceModel => _listPlaceModel;
 
-  void _changeState(ListPlaceState state) => _state = state;
+  void _changeState(ListPlaceState state) {
+    _state = state;
+  }
 
   ListPlaceProvider();
 
@@ -52,11 +55,13 @@ class ListPlaceProvider {
   }
 
   Future<void> getListPlace() async {
+    _changeState(ListPlaceState.Busy);
     await locator.isReady<ListPlaceStorage>().whenComplete(() async {
       _listPlaceModel = locator.get<ListPlaceStorage>().getListPlace();
       if (_listPlaceModel == null) {
         await getListPlaceFromServer();
       }
+      _changeState(ListPlaceState.Idle);
     });
   }
 

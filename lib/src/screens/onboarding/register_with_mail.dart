@@ -60,7 +60,8 @@ class _RegisterWithMailState extends State<RegisterWithMail> {
         child: Form(
           key: _formKey,
           child: ListView(
-            physics: const ClampingScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics()
+                .applyTo(const ClampingScrollPhysics()),
             padding: EdgeInsets.zero,
             children: [
               Row(children: const [ChevBackButton(), Spacer()]),

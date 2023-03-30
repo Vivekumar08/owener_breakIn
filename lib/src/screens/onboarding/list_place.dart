@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'dart:io' show File, Platform;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -72,7 +72,9 @@ class _ListPlaceState extends State<ListPlace> {
               Text('Add Documents', style: Fonts.inputText),
               const SizedBox(height: 4.0),
               UploadFormButton(
-                  notifier: document, validator: fileValidationWithSize()),
+                  notifier: document,
+                  type: Platform.isAndroid ? UploadButtonType.Doc : null,
+                  validator: fileValidationWithSize()),
               const SizedBox(height: 16.0),
               Text(
                   'Submit Document Approved by Regulatory Authority/Institution/Government/fssai in .pdf/.jpg format.',

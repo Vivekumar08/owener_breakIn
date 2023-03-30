@@ -1,4 +1,5 @@
 import 'dart:io' show File, Platform;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ import '../../models/food_place.dart';
 import '../../models/menu.dart';
 import '../../providers/providers.dart';
 import '../../router/constants.dart';
+import '../../services/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/palette.dart';
 import '../../utils/symbols.dart';
@@ -25,7 +27,11 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   @override
   void initState() {
-    context.read<FoodPlaceProvider>().getFoodPlace();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.read<FoodPlaceProvider>().foodPlaceModel == null) {
+        context.read<FoodPlaceProvider>().getFoodPlace();
+      }
+    });
     super.initState();
   }
 
@@ -50,10 +56,11 @@ class _MenuState extends State<Menu> {
         body: SafeArea(
           top: Platform.isAndroid, // No top safe area for IOS
           child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
+            physics: const AlwaysScrollableScrollPhysics()
+                .applyTo(const ClampingScrollPhysics()),
             child: provider.foodPlaceModel == null
-                ? _buildLoading(
-                    _buildPage(FoodPlaceModel.fromJson(menuExample)))
+                ? _buildLoading(_buildPage(FoodPlaceModel.fromJson(menuExample),
+                    loading: true))
                 : _buildPage(provider.foodPlaceModel!),
           ),
         ),
@@ -71,16 +78,17 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  Column _buildPage(FoodPlaceModel foodPlace) {
+  Column _buildPage(FoodPlaceModel foodPlace, {bool? loading}) {
     return Column(
       children: [
         Stack(
           children: [
-            Image.network(
-              foodPlace.image,
-              errorBuilder: (context, error, stackTrace) =>
-                  Container(height: 300, color: Palette.white),
-            ),
+            foodPlace.image.isEmpty
+                ? Container(height: 300, color: Palette.white)
+                : CachedNetworkImage(
+                    imageUrl: '$fileInfo/${foodPlace.image}',
+                    fadeInDuration: const Duration(milliseconds: 0),
+                  ),
             AppBar(
               automaticallyImplyLeading: true,
               backgroundColor: Colors.transparent,
@@ -116,7 +124,7 @@ class _MenuState extends State<Menu> {
                 children: [
                   Symbols.star,
                   const SizedBox(width: 7.0),
-                  foodPlace.rating == null
+                  loading == true
                       // Builds Loader for Ratings
                       ? Container(
                           height: 20.0,
@@ -126,8 +134,13 @@ class _MenuState extends State<Menu> {
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                         )
-                      : Text(foodPlace.rating.toString(),
-                          style: Fonts.simTextBlack.copyWith(fontSize: 16.0)),
+                      : foodPlace.rating == null
+                          ? Text('No Ratings',
+                              style:
+                                  Fonts.simTextBlack.copyWith(fontSize: 16.0))
+                          : Text(foodPlace.rating.toString(),
+                              style:
+                                  Fonts.simTextBlack.copyWith(fontSize: 16.0)),
                   const Spacer(),
                   const Icon(Icons.share_outlined),
                 ],
@@ -138,7 +151,10 @@ class _MenuState extends State<Menu> {
               const SizedBox(height: 4.0),
               Text(foodPlace.location.address, style: Fonts.simTextBlack),
               const SizedBox(height: 16.0),
-              foodPlace.menu == null ? Container() : _buildMenu(foodPlace),
+              foodPlace.menu.isEmpty
+                  ? Text('No Items Yet',
+                      style: Fonts.otpText.copyWith(fontSize: 16.0))
+                  : _buildMenu(foodPlace.menu),
             ],
           ),
         ),
@@ -146,7 +162,7 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  Column _buildMenu(FoodPlaceModel foodPlace) {
+  Column _buildMenu(List<MenuCategory> menu) {
     return Column(
       children: [
         Row(
@@ -159,7 +175,7 @@ class _MenuState extends State<Menu> {
           ],
         ),
         const SizedBox(height: 6.0),
-        for (MenuCategory category in foodPlace.menu!) Accordion(menu: category)
+        for (MenuCategory category in menu) Accordion(menu: category)
       ],
     );
   }

@@ -20,6 +20,14 @@ class FoodPlaceStorage {
     if (!Hive.isAdapterRegistered(5)) {
       Hive.registerAdapter(LocationAdapter());
     }
+
+    // For get foodplace, these are required
+    if (!Hive.isAdapterRegistered(6)) {
+      Hive.registerAdapter(MenuCategoryAdapter());
+    }
+    if (!Hive.isAdapterRegistered(7)) {
+      Hive.registerAdapter(MenuItemAdapter());
+    }
     await Hive.openBox('foodPlace');
     return FoodPlaceStorage();
   }
@@ -39,12 +47,12 @@ class FoodPlaceStorage {
   }
 
   // Get menu
-  List<MenuCategory>? getMenu() {
+  List<MenuCategory> getMenu() {
     dynamic data = storage.get(key);
     if (data is FoodPlaceModel) {
       return data.menu;
     }
-    return null;
+    return [];
   }
 
   // Update foodPlaceModel
@@ -53,7 +61,7 @@ class FoodPlaceStorage {
   }
 
   // Update foodPlaceModel
-  Future<void> updateMenu(List<MenuCategory>? list) async {
+  Future<void> updateMenu(List<MenuCategory> list) async {
     try {
       FoodPlaceModel foodPlaceModel = storage.get(key);
       foodPlaceModel.menu = list;

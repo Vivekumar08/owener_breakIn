@@ -131,7 +131,8 @@ class OurTeam extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 22.0),
         child: ListView(
-          physics: const ClampingScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics()
+              .applyTo(const ClampingScrollPhysics()),
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               _buildProfile(name: 'Pintu', role: 'Main Ideator'),

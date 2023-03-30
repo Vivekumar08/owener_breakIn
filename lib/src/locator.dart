@@ -11,8 +11,9 @@ setup() {
   locator.registerLazySingleton<OtpServiceViaEmail>(() => OtpServiceViaEmail());
   locator.registerLazySingleton<ProfileService>(() => ProfileService());
   locator.registerLazySingleton<OwnerService>(() => OwnerService());
-  locator.registerLazySingleton<ListPlaceService>(() => ListPlaceService());
   locator.registerLazySingleton<FoodPlaceService>(() => FoodPlaceService());
+  locator.registerLazySingleton<ListPlaceService>(() => ListPlaceService());
+
   // DB services
   locator.registerLazySingleton<TokenStorage>(() => TokenStorage());
   locator.registerLazySingletonAsync<OwnerStorage>(

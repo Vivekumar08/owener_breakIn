@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart' show MaterialPage;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../models/menu.dart';
+import '../models/models.dart';
 import '../providers/providers.dart';
 import '../screens/home/home.dart';
 import '../screens/location/location_screen.dart';
@@ -115,6 +115,15 @@ final router = GoRouter(
       path: '/home',
       pageBuilder: (context, state) =>
           FadeTransitionPage(key: state.pageKey, child: const Home()),
+      redirect: (context, GoRouterState state) async {
+        final listPlaceProvider = context.read<ListPlaceProvider>();
+        await listPlaceProvider.getListPlace();
+        if (listPlaceProvider.listPlaceModel?.status == null) {
+          return listPlace;
+        } else {
+          return null;
+        }
+      },
       routes: [
         GoRoute(
           path: 'addFoodPlace',

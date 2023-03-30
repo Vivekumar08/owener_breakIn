@@ -9,10 +9,11 @@ import '../services/db/db.dart';
 import '../style/snack_bar.dart';
 
 // FoodPlaceProvider Constants
-enum FoodPlaceState { Idle, Uploading, Uploaded, Fetching, Updating }
+enum FoodPlaceState { Idle, Uploading, Uploaded, Fetching, Updating, Updated }
 
 extension FoodPlaceExtension on FoodPlaceState {
   bool isUploaded() => this == FoodPlaceState.Uploaded ? true : false;
+  bool isUpdated() => this == FoodPlaceState.Updated ? true : false;
 }
 
 class FoodPlaceProvider extends ChangeNotifier {
@@ -36,7 +37,7 @@ class FoodPlaceProvider extends ChangeNotifier {
   }
 
   Future<void> getFoodPlace() async {
-    // _changeState(FoodPlaceState.Fetching);
+    _changeState(FoodPlaceState.Fetching);
     await locator.isReady<FoodPlaceStorage>().whenComplete(() async {
       _foodPlaceModel = locator.get<FoodPlaceStorage>().getFoodPlace();
       if (_foodPlaceModel == null) {
@@ -47,6 +48,7 @@ class FoodPlaceProvider extends ChangeNotifier {
   }
 
   Future<void> getFoodPlaceFromServer() async {
+    _changeState(FoodPlaceState.Fetching);
     String? token = await locator.get<TokenStorage>().getToken();
     Map<String, dynamic> response =
         await locator.get<FoodPlaceService>().getFoodPlace(token!);
@@ -57,6 +59,7 @@ class FoodPlaceProvider extends ChangeNotifier {
       _foodPlaceModel = FoodPlaceModel.fromJson(response);
       (await locator.getAsync<FoodPlaceStorage>())
           .addFoodPlace(_foodPlaceModel!);
+      _changeState(FoodPlaceState.Idle);
     } else {
       debugPrint(response.toString());
     }
@@ -90,6 +93,55 @@ class FoodPlaceProvider extends ChangeNotifier {
       await locator.get<ListPlaceStorage>().updateListPlaceDetails({
         foodPlace: response[foodPlace][foodPlaceId]
       }).whenComplete(() => _changeState(FoodPlaceState.Uploaded));
+    } else {
+      if (response[err] != null) {
+        showSnackBar(response[err].toString());
+      }
+      _changeState(FoodPlaceState.Idle);
+    }
+  }
+
+  Future<void> addNewCategory({required String cat}) async {
+    _changeState(FoodPlaceState.Updating);
+    String? token = await locator.get<TokenStorage>().getToken();
+    Map<String, dynamic> response =
+        await locator.get<FoodPlaceService>().addMenuCategory(token!, cat);
+
+    print(response);
+
+    if (response[code] == 200) {
+      (await locator.getAsync<MenuStorage>())
+          .addMenuCategory(MenuCategory(name: cat, items: []));
+      showSnackBar(response[msg]);
+      _changeState(FoodPlaceState.Updated);
+    } else {
+      if (response[err] != null) {
+        showSnackBar(response[err].toString());
+        // If category exists on db but not locally
+        if (response[err].toString() == '$cat already exists' &&
+            !(await locator.getAsync<MenuStorage>()).hasMenuCategory(cat)) {
+          (await locator.getAsync<MenuStorage>())
+              .addMenuCategory(MenuCategory(name: cat, items: []));
+        }
+      }
+      _changeState(FoodPlaceState.Idle);
+    }
+  }
+
+  Future<void> addNewItem(
+      {required String category, required MenuItem item}) async {
+    _changeState(FoodPlaceState.Updating);
+    String? token = await locator.get<TokenStorage>().getToken();
+    Map<String, dynamic> response = await locator
+        .get<FoodPlaceService>()
+        .addMenuItem(token!, category, item);
+
+    print(response);
+
+    if (response[code] == 200) {
+      (await locator.getAsync<MenuStorage>()).addMenuItem(category, item);
+      showSnackBar(response[msg]);
+      _changeState(FoodPlaceState.Updated);
     } else {
       if (response[err] != null) {
         showSnackBar(response[err].toString());

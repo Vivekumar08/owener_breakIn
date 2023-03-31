@@ -22,7 +22,7 @@ Map<String, dynamic> menuExample = {
 Map<String, dynamic> menuCategoryExample = {
   'Category': [
     {
-      'Name': 'Thali (1)',
+      'Name': 'Thali',
       'Items': [
         {
           'ItemName': 'Indian Thali',
@@ -55,7 +55,7 @@ Map<String, dynamic> menuCategoryExample = {
       ]
     },
     {
-      'Name': 'Lunch (2)',
+      'Name': 'Lunch',
       'Items': [
         {
           'ItemName': 'Indian Thali',

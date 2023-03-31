@@ -10,7 +10,7 @@ String fileName = 'filename';
 String foodPlace = 'foodPlace';
 String foodPlaceId = 'foodPlaceId';
 String id = 'id';
-String imageUrl = 'image';
+String imageUrl = 'imageUrl';
 
 // Constants
 

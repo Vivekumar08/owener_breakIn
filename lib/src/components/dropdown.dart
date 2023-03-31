@@ -3,16 +3,21 @@ import '../style/fonts.dart';
 import '../style/palette.dart';
 
 class Dropdown extends StatefulWidget {
-  const Dropdown(
+  Dropdown(
       {super.key,
       required this.inputText,
       required this.items,
       required this.controller,
-      this.validator});
+      this.initialValue,
+      this.validator})
+      : assert(initialValue == null ||
+            items.isEmpty ||
+            items.contains(initialValue));
 
   final String inputText;
   final List<String> items;
   final TextEditingController controller;
+  final String? initialValue;
   final String? Function(String?)? validator;
 
   @override
@@ -24,7 +29,11 @@ class _DropdownState extends State<Dropdown> {
 
   @override
   void initState() {
-    dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
+    if (widget.initialValue == null) {
+      dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
+    } else {
+      dropdownValue = widget.initialValue!;
+    }
     widget.controller.text = dropdownValue;
     super.initState();
   }

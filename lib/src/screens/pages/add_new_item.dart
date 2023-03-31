@@ -24,7 +24,7 @@ class _AddNewItemState extends State<AddNewItem> {
   TextEditingController price = TextEditingController();
   TextEditingController category = TextEditingController();
   TextEditingController ingredients = TextEditingController();
-  ValueNotifier<bool> isVeg = ValueNotifier(false);
+  ValueNotifier<bool> isNonVeg = ValueNotifier(false);
 
   final _formKey = GlobalKey<FormState>();
 
@@ -34,7 +34,7 @@ class _AddNewItemState extends State<AddNewItem> {
     price.dispose();
     category.dispose();
     ingredients.dispose();
-    isVeg.dispose();
+    isNonVeg.dispose();
     super.dispose();
   }
 
@@ -99,7 +99,7 @@ class _AddNewItemState extends State<AddNewItem> {
                   Text('Non-Veg',
                       style: Fonts.appBarTitle.copyWith(fontSize: 12.0)),
                   const SizedBox(width: 8.0),
-                  ToggleButton(notifier: isVeg),
+                  ToggleButton(notifier: isNonVeg),
                 ],
               ),
               const Spacer(),
@@ -113,7 +113,7 @@ class _AddNewItemState extends State<AddNewItem> {
                         name: itemName.text,
                         price: int.parse(price.text),
                         details: ingredients.text,
-                        isVeg: !isVeg.value,
+                        isVeg: !isNonVeg.value,
                       ),
                       category: category.text,
                     )

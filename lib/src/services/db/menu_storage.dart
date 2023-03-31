@@ -121,7 +121,7 @@ class MenuStorage {
     }
   }
 
-  // Update menu item from id
+  // Update menu item from id in same category
   Future<void> updateMenuItem(String id, MenuItem item) async {
     List<MenuCategory>? menu = foodPlaceStorage.getMenu();
     for (MenuCategory menuCategory in menu) {
@@ -136,6 +136,33 @@ class MenuStorage {
         }
       }
     }
+  }
+
+  // Update menu item from id in different category
+  Future<void> updateMenuItemViaCategory(
+      String oldId, String category, MenuItem item) async {
+    // Operations to perform
+    bool deleted = false;
+    bool added = false;
+    List<MenuCategory>? menu = foodPlaceStorage.getMenu();
+    for (MenuCategory menuCategory in menu) {
+      if (!added || !deleted) {
+        if (menuCategory.items != null && !deleted) {
+          menuCategory.items?.removeWhere((item) {
+            if (item.id == oldId) deleted = true;
+            return item.id == oldId;
+          });
+        }
+
+        // No menuitem with similar name exists (checked via backend)
+        if (menuCategory.name == category) {
+          menuCategory.items?.add(item);
+          added = true;
+        }
+      }
+    }
+    // Update Menu
+    foodPlaceStorage.updateMenu(menu);
   }
 
   // Update item status (availability) from id

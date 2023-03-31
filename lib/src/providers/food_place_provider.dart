@@ -167,10 +167,9 @@ class FoodPlaceProvider extends ChangeNotifier {
     Map<String, dynamic> response =
         await locator.get<FoodPlaceService>().changeCoverImage(token!, image);
 
-    print(response);
-
     if (response[code] == 200) {
       if (response[imageUrl] != null) {
+        _foodPlaceModel?.image = response[imageUrl];
         (await locator.getAsync<FoodPlaceStorage>())
             .updateFoodPlaceDetails({"image": response[image]});
         showSnackBar(response[msg]);
@@ -196,6 +195,31 @@ class FoodPlaceProvider extends ChangeNotifier {
     if (response[code] == 200) {
       (await locator.getAsync<MenuStorage>())
           .updateItemStatus(item.id!, status);
+      showSnackBar(response[msg]);
+      _changeState(FoodPlaceState.Updated);
+    } else {
+      if (response[err] != null) {
+        showSnackBar(response[err].toString());
+      }
+      _changeState(FoodPlaceState.Idle);
+    }
+  }
+
+  Future<void> editItem(
+      {required String category, required MenuItem item}) async {
+    if (item.id == null) return showSnackBar('Error: Please Refresh');
+    String oldId = item.id!;
+    _changeState(FoodPlaceState.Updating);
+    String? token = await locator.get<TokenStorage>().getToken();
+
+    Map<String, dynamic> response = await locator
+        .get<FoodPlaceService>()
+        .editMenuItem(token!, oldId, category, item);
+
+    if (response[code] == 200) {
+      if (response[id] != null) item.id = response[id];
+      (await locator.getAsync<MenuStorage>())
+          .updateMenuItemViaCategory(oldId, category, item);
       showSnackBar(response[msg]);
       _changeState(FoodPlaceState.Updated);
     } else {

@@ -167,4 +167,31 @@ class FoodPlaceService {
     }
     return body;
   }
+
+  Future<Map<String, dynamic>> editMenuItem(
+      String token, String id, String category, MenuItem item) async {
+    Map<String, dynamic> body = {};
+    Map<String, dynamic> fields = item.toJson();
+    fields.addAll({'Category': category});
+    try {
+      http.Response response = await http.put(
+        Uri.parse('$resUrl/edit/menuitems?id=$id'),
+        body: jsonEncode(fields),
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(duration_10);
+
+      body = jsonDecode(response.body);
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
 }

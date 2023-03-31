@@ -106,8 +106,7 @@ class _AccordionBody extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: () => context.go(
-                    '$modifyItem/${menuCategory.split(' ').first}',
+                onTap: () => context.go('$modifyItem?category=$menuCategory',
                     extra: menuItem),
                 child: Text('Edit Item',
                     style: Fonts.simTextBlack.copyWith(color: Palette.link)),

@@ -141,15 +141,16 @@ final router = GoRouter(
             // Modify Item takes a MenuItem object & menuCategory String
             // to create Modify Item Page
             GoRoute(
-              path: 'modifyItem/:category',
+              path: 'modifyItem',
               pageBuilder: (context, state) {
                 assert(state.extra is MenuItem);
+                assert(state.queryParams['category'] != null);
                 MenuItem menuItem = state.extra as MenuItem;
                 return MaterialPage(
                   fullscreenDialog: true,
                   child: ModifyItem(
                       menuItem: menuItem,
-                      menuCategory: state.params['category']),
+                      menuCategory: state.queryParams['category']!),
                 );
               },
             ),

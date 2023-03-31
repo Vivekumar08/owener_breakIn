@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../models/menu.dart';
+import '../providers/food_place_provider.dart';
 import '../router/constants.dart';
 import '../style/fonts.dart';
 import '../style/palette.dart';
@@ -16,9 +18,14 @@ class Accordion extends StatefulWidget {
 }
 
 class _AccordionState extends State<Accordion> {
-  void expansionCallback(int index, bool isExpanded) => setState(() {
-        widget.menu.isExpanded = !widget.menu.isExpanded;
-      });
+  void expansionCallback(String category, bool isExpanded) async {
+    await context
+        .read<FoodPlaceProvider>()
+        .updateExpansionState(category: category, state: isExpanded);
+    setState(() {
+      widget.menu.isExpanded = !widget.menu.isExpanded;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,8 @@ class _AccordionState extends State<Accordion> {
         _AccordionHeader(
             title: widget.menu.name,
             isExpanded: widget.menu.isExpanded,
-            onPressed: () => expansionCallback(0, widget.menu.isExpanded)),
+            onPressed: () =>
+                expansionCallback(widget.menu.name, widget.menu.isExpanded)),
         widget.menu.isExpanded
             ? Column(
                 children: [
@@ -87,7 +95,7 @@ class _AccordionBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(menuItem.item,
+      title: Text(menuItem.name,
           style: Fonts.textButton.copyWith(color: Palette.text, height: 1.11)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +140,11 @@ class _AccordionBody extends StatelessWidget {
         children: [
           Text('Rs. ${menuItem.price}',
               style: Fonts.otpText.copyWith(fontSize: 16.0)),
-          ToggleButton(notifier: ValueNotifier(true)),
+          ToggleButton(
+            notifier: ValueNotifier(menuItem.isAvailable),
+            onTap: () => context.read<FoodPlaceProvider>().updateItemStatus(
+                status: !menuItem.isAvailable, item: menuItem),
+          ),
         ],
       ),
       horizontalTitleGap: 0,

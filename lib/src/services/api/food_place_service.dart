@@ -113,4 +113,58 @@ class FoodPlaceService {
     }
     return body;
   }
+
+  Future<Map<String, dynamic>> changeCoverImage(
+      String token, File image) async {
+    Map<String, dynamic> body = {};
+    try {
+      http.MultipartRequest request =
+          http.MultipartRequest('POST', Uri.parse('$resUrl/edit/coverPhoto'));
+      request.headers[HttpHeaders.authorizationHeader] = token;
+      request.headers[HttpHeaders.contentTypeHeader] = 'multipart/form-data';
+
+      final file = http.MultipartFile.fromBytes(
+          'file', await image.readAsBytes(),
+          filename: image.path.split('/').last);
+      request.files.add(file);
+
+      http.StreamedResponse response = await request.send();
+
+      Uint8List responseData = await response.stream.toBytes();
+      body = jsonDecode(String.fromCharCodes(responseData));
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
+
+  Future<Map<String, dynamic>> updateItemStatus(
+      String token, bool status, MenuItem item) async {
+    Map<String, dynamic> body = {};
+    try {
+      http.Response response = await http.patch(
+        Uri.parse('$resUrl/update/status/menuItems?menuid=${item.id}'),
+        body: jsonEncode({"status": status}),
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(duration_5);
+
+      body = jsonDecode(response.body);
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
 }

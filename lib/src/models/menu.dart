@@ -34,7 +34,7 @@ class MenuCategory extends HiveObject {
 class MenuItem extends HiveObject {
   MenuItem({
     this.id,
-    required this.item,
+    required this.name,
     required this.details,
     required this.price,
     required this.isVeg,
@@ -43,11 +43,11 @@ class MenuItem extends HiveObject {
 
   @HiveField(0)
   @JsonKey(name: '_id')
-  final String? id;
+  String? id;
 
   @HiveField(1)
   @JsonKey(name: 'ItemName')
-  final String item;
+  final String name;
 
   @HiveField(2)
   @JsonKey(name: 'Ingredients')

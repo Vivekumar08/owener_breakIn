@@ -20,10 +20,21 @@ class Dropdown extends StatefulWidget {
 }
 
 class _DropdownState extends State<Dropdown> {
+  late String dropdownValue;
+
+  @override
+  void initState() {
+    dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
+    widget.controller.text = dropdownValue;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
-    widget.controller.text = dropdownValue;
+    if (dropdownValue.isEmpty && widget.items.isNotEmpty) {
+      dropdownValue = widget.items.first;
+      widget.controller.text = dropdownValue;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

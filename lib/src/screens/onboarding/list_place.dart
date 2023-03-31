@@ -73,7 +73,9 @@ class _ListPlaceState extends State<ListPlace> {
               const SizedBox(height: 4.0),
               UploadFormButton(
                   notifier: document,
-                  type: Platform.isAndroid ? UploadButtonType.Doc : null,
+                  type: Platform.isAndroid
+                      ? UploadButtonType.Doc
+                      : UploadButtonType.Custom,
                   validator: fileValidationWithSize()),
               const SizedBox(height: 16.0),
               Text(

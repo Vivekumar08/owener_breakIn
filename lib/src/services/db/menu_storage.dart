@@ -87,43 +87,71 @@ class MenuStorage {
     return result;
   }
 
-  // Add addMenuCategory
+  // Check if MenuCategory Exists Locally
   bool hasMenuCategory(String menuCategory) {
-    bool result = false;
     List<MenuCategory>? list = foodPlaceStorage.getMenu();
-    for (MenuCategory element in list) {
-      if (element.name == menuCategory) return true;
+    for (MenuCategory category in list) {
+      if (category.name == menuCategory) return true;
     }
-    return result;
+    return false;
+  }
+
+  // Check if MenuItem Exists Locally
+  bool hasMenuItem(String category, String itemName) {
+    List<MenuCategory>? list = foodPlaceStorage.getMenu();
+    for (MenuCategory menuCateogry in list) {
+      if (menuCateogry.name == category && menuCateogry.items != null) {
+        for (MenuItem menuItem in menuCateogry.items!) {
+          if (menuItem.name == itemName) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  // Update Expansion State
+  Future<void> updateExpansionState(String category, bool state) async {
+    List<MenuCategory>? menu = foodPlaceStorage.getMenu();
+    for (MenuCategory menuCategory in menu) {
+      if (menuCategory.name == category) {
+        menuCategory.isExpanded = state;
+        await foodPlaceStorage.updateMenu(menu);
+        return;
+      }
+    }
   }
 
   // Update menu item from id
   Future<void> updateMenuItem(String id, MenuItem item) async {
     List<MenuCategory>? menu = foodPlaceStorage.getMenu();
-    for (var menuCategory in menu) {
-      menuCategory.items?.forEach((menuItem) {
-        if (menuItem.id == id) {
-          menuCategory.items?.remove(menuItem);
-          menuCategory.items?.add(item);
-          foodPlaceStorage.updateMenu(menu);
-          return;
+    for (MenuCategory menuCategory in menu) {
+      if (menuCategory.items != null) {
+        for (MenuItem menuItem in menuCategory.items!) {
+          if (menuItem.id == id) {
+            menuCategory.items?.remove(menuItem);
+            menuCategory.items?.add(item);
+            foodPlaceStorage.updateMenu(menu);
+            return;
+          }
         }
-      });
+      }
     }
   }
 
   // Update item status (availability) from id
   Future<void> updateItemStatus(String id, bool status) async {
     List<MenuCategory>? menu = foodPlaceStorage.getMenu();
-    for (var menuCategory in menu) {
-      menuCategory.items?.forEach((menuItem) {
-        if (menuItem.id == id) {
-          menuItem.isAvailable = status;
-          return;
+    for (MenuCategory menuCategory in menu) {
+      if (menuCategory.items != null) {
+        for (MenuItem menuItem in menuCategory.items!) {
+          if (menuItem.id == id) {
+            menuItem.isAvailable = status;
+            foodPlaceStorage.updateMenu(menu);
+            return;
+          }
         }
-      });
+      }
     }
-    foodPlaceStorage.updateMenu(menu);
   }
 
   // Delete Menu Category from MenuCategory Object

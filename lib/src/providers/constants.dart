@@ -9,6 +9,8 @@ String err = 'err';
 String fileName = 'filename';
 String foodPlace = 'foodPlace';
 String foodPlaceId = 'foodPlaceId';
+String id = 'id';
+String imageUrl = 'image';
 
 // Constants
 

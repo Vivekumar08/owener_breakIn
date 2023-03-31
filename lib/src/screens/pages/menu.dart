@@ -13,6 +13,7 @@ import '../../providers/providers.dart';
 import '../../router/constants.dart';
 import '../../services/constants.dart';
 import '../../style/fonts.dart';
+import '../../style/loader.dart';
 import '../../style/palette.dart';
 import '../../utils/symbols.dart';
 import '../../utils/validators.dart';
@@ -58,7 +59,7 @@ class _MenuState extends State<Menu> {
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics()
                 .applyTo(const ClampingScrollPhysics()),
-            child: provider.foodPlaceModel == null
+            child: provider.foodPlaceModel == null || provider.state.isLoading()
                 ? _buildLoading(_buildPage(FoodPlaceModel.fromJson(menuExample),
                     loading: true))
                 : _buildPage(provider.foodPlaceModel!),
@@ -85,9 +86,12 @@ class _MenuState extends State<Menu> {
           children: [
             foodPlace.image.isEmpty
                 ? Container(height: 300, color: Palette.white)
-                : CachedNetworkImage(
-                    imageUrl: '$fileInfo/${foodPlace.image}',
-                    fadeInDuration: const Duration(milliseconds: 0),
+                : Container(
+                    constraints: const BoxConstraints(minHeight: 300),
+                    child: CachedNetworkImage(
+                      imageUrl: '$fileInfo/${foodPlace.image}',
+                      fadeInDuration: const Duration(milliseconds: 0),
+                    ),
                   ),
             AppBar(
               automaticallyImplyLeading: true,
@@ -190,6 +194,7 @@ class CoverImage extends StatefulWidget {
 
 class _CoverImageState extends State<CoverImage> {
   ValueNotifier<File?> coverImage = ValueNotifier(null);
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -201,6 +206,7 @@ class _CoverImageState extends State<CoverImage> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<FoodPlaceProvider>(context);
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
@@ -226,11 +232,19 @@ class _CoverImageState extends State<CoverImage> {
               valueListenable: coverImage,
               builder: (_, file, widget) => Button(
                 buttonText: 'Save Changes',
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    print('validated');
-                  }
-                },
+                onPressed: file == null
+                    ? null
+                    : () {
+                        if (_formKey.currentState!.validate()) {
+                          showLoader(context);
+                          provider.changeCoverImage(image: file).whenComplete(
+                            () {
+                              context.pop();
+                              provider.state.isUpdated() ? context.pop() : null;
+                            },
+                          );
+                        }
+                      },
               ),
             )
           ],

@@ -58,7 +58,7 @@ class MenuItemAdapter extends TypeAdapter<MenuItem> {
     };
     return MenuItem(
       id: fields[0] as String?,
-      item: fields[1] as String,
+      name: fields[1] as String,
       details: fields[2] as String,
       price: fields[3] as int,
       isVeg: fields[4] as bool,
@@ -73,7 +73,7 @@ class MenuItemAdapter extends TypeAdapter<MenuItem> {
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.item)
+      ..write(obj.name)
       ..writeByte(2)
       ..write(obj.details)
       ..writeByte(3)
@@ -114,7 +114,7 @@ Map<String, dynamic> _$MenuCategoryToJson(MenuCategory instance) =>
 
 MenuItem _$MenuItemFromJson(Map<String, dynamic> json) => MenuItem(
       id: json['_id'] as String?,
-      item: json['ItemName'] as String,
+      name: json['ItemName'] as String,
       details: json['Ingredients'] as String,
       price: json['Price'] as int,
       isVeg: json['isVeg'] as bool,
@@ -123,7 +123,7 @@ MenuItem _$MenuItemFromJson(Map<String, dynamic> json) => MenuItem(
 
 Map<String, dynamic> _$MenuItemToJson(MenuItem instance) => <String, dynamic>{
       '_id': instance.id,
-      'ItemName': instance.item,
+      'ItemName': instance.name,
       'Ingredients': instance.details,
       'Price': instance.price,
       'isVeg': MenuItem._toJson(instance.isVeg),

@@ -35,6 +35,7 @@ class _HomeState extends State<Home> {
   }
 
   void _buildMessage(ListPlaceStatus? status) {
+    setState(() {});
     if (status == ListPlaceStatus.verifying) {
       showMessageDialog(dismissible: false, context: context, children: [
         Text(

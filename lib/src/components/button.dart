@@ -319,9 +319,10 @@ class _UploadButtonState extends State<UploadButton> {
 }
 
 class ToggleButton extends StatelessWidget {
-  const ToggleButton({super.key, required this.notifier});
+  const ToggleButton({super.key, required this.notifier, this.onTap});
 
   final ValueNotifier<bool> notifier;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -334,7 +335,10 @@ class ToggleButton extends StatelessWidget {
           builder: (context, state, _) {
             return CupertinoSwitch(
               value: state,
-              onChanged: (value) => notifier.value = value,
+              onChanged: (value) {
+                onTap?.call();
+                notifier.value = value;
+              },
             );
           },
         ),

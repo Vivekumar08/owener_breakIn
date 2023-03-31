@@ -18,7 +18,7 @@ class ModifyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController itemName = TextEditingController(text: menuItem.item);
+    TextEditingController itemName = TextEditingController(text: menuItem.name);
     TextEditingController price =
         TextEditingController(text: menuItem.price.toString());
     TextEditingController category = TextEditingController();

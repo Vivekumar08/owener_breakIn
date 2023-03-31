@@ -1,4 +1,3 @@
-import 'package:break_in/src/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -39,14 +38,19 @@ class _AddNewItemState extends State<AddNewItem> {
     super.dispose();
   }
 
+  List<String> getCategories(FoodPlaceProvider provider) {
+    List<String> categories = [];
+    if (provider.foodPlaceModel != null) {
+      for (MenuCategory category in provider.foodPlaceModel!.menu) {
+        categories.add(category.name);
+      }
+    }
+    return categories;
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<FoodPlaceProvider>(context);
-    List<String> categories = [];
-    // ignore: avoid_function_literals_in_foreach_calls
-    provider.foodPlaceModel?.menu.forEach((category) {
-      categories.add(category.name);
-    });
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -74,7 +78,7 @@ class _AddNewItemState extends State<AddNewItem> {
                   validator: numberValidation),
               Dropdown(
                   inputText: "Category*",
-                  items: categories,
+                  items: getCategories(provider),
                   controller: category,
                   validator: nullValidation),
               const SizedBox(height: 8.0),
@@ -106,7 +110,7 @@ class _AddNewItemState extends State<AddNewItem> {
                     provider
                         .addNewItem(
                       item: MenuItem(
-                        item: itemName.text,
+                        name: itemName.text,
                         price: int.parse(price.text),
                         details: ingredients.text,
                         isVeg: !isVeg.value,
@@ -173,8 +177,7 @@ class _AddNewCategoryState extends State<AddNewCategory> {
               const Spacer(),
               Button(
                 onPressed: () async {
-                  if (_formKey.currentState!.validate() &&
-                      !categories.contains(name.text)) {
+                  if (_formKey.currentState!.validate()) {
                     showLoader(context);
                     await provider.addNewCategory(cat: name.text).whenComplete(
                       () {

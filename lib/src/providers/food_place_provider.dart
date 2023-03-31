@@ -1,12 +1,13 @@
 // ignore_for_file: constant_identifier_names
 import 'dart:io' show File;
 import 'package:flutter/foundation.dart';
-import 'constants.dart';
 import '../locator.dart';
 import '../models/models.dart';
 import '../services/api/api.dart';
 import '../services/db/db.dart';
+import '../services/preferences.dart';
 import '../style/snack_bar.dart';
+import 'constants.dart';
 
 // FoodPlaceProvider Constants
 enum FoodPlaceState { Idle, Uploading, Uploaded, Fetching, Updating, Updated }
@@ -44,6 +45,7 @@ class FoodPlaceProvider extends ChangeNotifier {
     _changeState(FoodPlaceState.Fetching);
     await locator.isReady<FoodPlaceStorage>().whenComplete(() async {
       _foodPlaceModel = locator.get<FoodPlaceStorage>().getFoodPlace();
+      print(_foodPlaceModel?.toJson());
       if (_foodPlaceModel == null) {
         await getFoodPlaceFromServer();
       }
@@ -229,4 +231,31 @@ class FoodPlaceProvider extends ChangeNotifier {
       _changeState(FoodPlaceState.Idle);
     }
   }
+
+  Future<void> deleteItem(MenuItem item) async {
+    if (item.id == null) return showSnackBar('Error: Please Refresh');
+    _changeState(FoodPlaceState.Updating);
+    String? token = await locator.get<TokenStorage>().getToken();
+
+    Map<String, dynamic> response =
+        await locator.get<FoodPlaceService>().deleteMenuItem(token!, item.id!);
+
+    if (response[code] == 200) {
+      if (response[id] != null) item.id = response[id];
+      (await locator.getAsync<MenuStorage>()).deleteMenuItem(item.id!);
+      showSnackBar(response[msg]);
+      _changeState(FoodPlaceState.Updated);
+    } else {
+      if (response[err] != null) {
+        showSnackBar(response[err].toString());
+      }
+      _changeState(FoodPlaceState.Idle);
+    }
+  }
+
+  Future<void> setPreference(bool value) async =>
+      (await locator.getAsync<Preferences>()).setPreference(value);
+
+  Future<bool?> getPreference() async =>
+      (await locator.getAsync<Preferences>()).getPreference();
 }

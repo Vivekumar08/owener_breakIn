@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'services/api/api.dart';
 import 'services/db/db.dart';
 import 'services/location/location.dart';
+import 'services/preferences.dart';
 
 final GetIt locator = GetIt.instance;
 
@@ -27,4 +28,7 @@ setup() {
 
   // Location Service
   locator.registerLazySingleton<LocationService>(() => LocationService());
+
+  // Other
+  locator.registerLazySingletonAsync<Preferences>(() => Preferences.init());
 }

@@ -26,6 +26,14 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
+  ValueNotifier<bool> notifier = ValueNotifier(false);
+
+  @override
+  void dispose() {
+    notifier.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -33,6 +41,10 @@ class _MenuState extends State<Menu> {
         context.read<FoodPlaceProvider>().getFoodPlace();
       }
     });
+    context
+        .read<FoodPlaceProvider>()
+        .getPreference()
+        .then((value) => notifier.value = value ?? false);
     super.initState();
   }
 
@@ -155,10 +167,27 @@ class _MenuState extends State<Menu> {
               const SizedBox(height: 4.0),
               Text(foodPlace.location.address, style: Fonts.simTextBlack),
               const SizedBox(height: 16.0),
+              Row(
+                children: [
+                  Text('Menu', style: Fonts.otpText.copyWith(fontSize: 16.0)),
+                  const Spacer(),
+                  Text('Veg Only',
+                      style: Fonts.appBarTitle.copyWith(fontSize: 12.0)),
+                  const SizedBox(width: 8.0),
+                  ToggleButton(
+                    notifier: notifier,
+                    onTap: () => context
+                        .read<FoodPlaceProvider>()
+                        .setPreference(notifier.value),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6.0),
               foodPlace.menu.isEmpty
                   ? Text('No Items Yet',
                       style: Fonts.otpText.copyWith(fontSize: 16.0))
                   : _buildMenu(foodPlace.menu),
+              const SizedBox(height: 100),
             ],
           ),
         ),
@@ -166,21 +195,30 @@ class _MenuState extends State<Menu> {
     );
   }
 
-  Column _buildMenu(List<MenuCategory> menu) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text('Menu', style: Fonts.otpText.copyWith(fontSize: 16.0)),
-            const Spacer(),
-            Text('Veg Only', style: Fonts.appBarTitle.copyWith(fontSize: 12.0)),
-            const SizedBox(width: 8.0),
-            ToggleButton(notifier: ValueNotifier(true)),
-          ],
-        ),
-        const SizedBox(height: 6.0),
-        for (MenuCategory category in menu) Accordion(menu: category)
-      ],
+  Widget _buildMenu(List<MenuCategory> menu) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: notifier,
+      builder: (context, value, _) {
+        return Column(
+          children: List.generate(
+            menu.length,
+            (index) => Accordion(
+              menu: menu[index],
+              expansionCallback: (category, len, isExpanded) => context
+                  .read<FoodPlaceProvider>()
+                  .updateExpansionState(category: category, state: isExpanded),
+              onEditItem: (category, item) =>
+                  context.go('$modifyItem?category=$category', extra: item),
+              onDeleteItem: (category, item) =>
+                  context.read<FoodPlaceProvider>().deleteItem(item),
+              onUpdateStatus: (category, item) => context
+                  .read<FoodPlaceProvider>()
+                  .updateItemStatus(status: !item.isAvailable, item: item),
+              itemFilter: value ? (category, item) => item.isVeg : null,
+            ),
+          ),
+        );
+      },
     );
   }
 }

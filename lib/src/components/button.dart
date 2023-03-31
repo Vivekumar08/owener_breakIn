@@ -336,8 +336,8 @@ class ToggleButton extends StatelessWidget {
             return CupertinoSwitch(
               value: state,
               onChanged: (value) {
-                onTap?.call();
                 notifier.value = value;
+                onTap?.call();
               },
             );
           },

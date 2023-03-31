@@ -204,13 +204,8 @@ class MenuStorage {
   Future<void> deleteMenuItem(String id) async {
     List<MenuCategory>? menu = foodPlaceStorage.getMenu();
     for (MenuCategory menuCategory in menu) {
-      menuCategory.items?.forEach((menuItem) {
-        if (menuItem.id == id) {
-          menuCategory.items?.remove(menuItem);
-          foodPlaceStorage.updateMenu(menu);
-          return;
-        }
-      });
+      menuCategory.items?.removeWhere((menuItem) => menuItem.id == id);
     }
+    foodPlaceStorage.updateMenu(menu);
   }
 }

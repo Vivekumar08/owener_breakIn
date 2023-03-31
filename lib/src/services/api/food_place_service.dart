@@ -194,4 +194,27 @@ class FoodPlaceService {
     }
     return body;
   }
+
+  Future<Map<String, dynamic>> deleteMenuItem(String token, String id) async {
+    Map<String, dynamic> body = {};
+    try {
+      http.Response response = await http.delete(
+        Uri.parse('$resUrl/delete/menuItems?id=$id'),
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(duration_5);
+
+      body = jsonDecode(response.body);
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
+      throw Exception(e);
+    }
+    return body;
+  }
 }

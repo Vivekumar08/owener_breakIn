@@ -45,7 +45,6 @@ class FoodPlaceProvider extends ChangeNotifier {
     _changeState(FoodPlaceState.Fetching);
     await locator.isReady<FoodPlaceStorage>().whenComplete(() async {
       _foodPlaceModel = locator.get<FoodPlaceStorage>().getFoodPlace();
-      print(_foodPlaceModel?.toJson());
       if (_foodPlaceModel == null) {
         await getFoodPlaceFromServer();
       }
@@ -207,8 +206,29 @@ class FoodPlaceProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateFoodPlaceStatus({required bool status}) async {
+    _changeState(FoodPlaceState.Updating);
+    String? token = await locator.get<TokenStorage>().getToken();
+    Map<String, dynamic> response = await locator
+        .get<FoodPlaceService>()
+        .updateFoodPlaceStatus(token!, status);
+
+    if (response[code] == 200) {
+      (await locator.getAsync<FoodPlaceStorage>()).updateStatus(status);
+      showSnackBar(response[msg]);
+      _changeState(FoodPlaceState.Updated);
+    } else {
+      if (response[err] != null) {
+        showSnackBar(response[err].toString());
+      }
+      _changeState(FoodPlaceState.Idle);
+    }
+  }
+
   Future<void> editItem(
-      {required String category, required MenuItem item}) async {
+      {required String category,
+      required MenuItem item,
+      bool sameCategory = false}) async {
     if (item.id == null) return showSnackBar('Error: Please Refresh');
     String oldId = item.id!;
     _changeState(FoodPlaceState.Updating);
@@ -220,8 +240,12 @@ class FoodPlaceProvider extends ChangeNotifier {
 
     if (response[code] == 200) {
       if (response[id] != null) item.id = response[id];
-      (await locator.getAsync<MenuStorage>())
-          .updateMenuItemViaCategory(oldId, category, item);
+      if (sameCategory) {
+        (await locator.getAsync<MenuStorage>()).updateMenuItem(oldId, item);
+      } else {
+        (await locator.getAsync<MenuStorage>())
+            .updateMenuItemViaCategory(oldId, category, item);
+      }
       showSnackBar(response[msg]);
       _changeState(FoodPlaceState.Updated);
     } else {

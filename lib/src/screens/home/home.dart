@@ -7,6 +7,7 @@ import '../../providers/providers.dart';
 import '../../router/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/message_dialog.dart';
+import '../../style/palette.dart';
 import '../../utils/images.dart';
 import '../../utils/symbols.dart';
 
@@ -22,9 +23,16 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _buildMessage(context.read<ListPlaceProvider>().listPlaceModel?.status);
-    });
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _buildMessage(context.read<ListPlaceProvider>().listPlaceModel?.status);
+        final provider = context.read<FoodPlaceProvider>();
+        if (provider.foodPlaceModel == null) {
+          provider.getFoodPlace().whenComplete(() => notifier.value =
+              context.read<FoodPlaceProvider>().foodPlaceModel?.status ?? true);
+        }
+      },
+    );
     super.initState();
   }
 
@@ -59,7 +67,13 @@ class _HomeState extends State<Home> {
       GestureDetector(
         onTap: () => context.go(route),
         child: Column(children: [
-          image,
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                border: Border.all(color: Palette.greyNormal),
+              ),
+              child: image),
           const SizedBox(height: 8.0),
           Text(text, style: Fonts.otpText.copyWith(fontSize: 14.0))
         ]),
@@ -67,7 +81,8 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ListPlaceProvider>(builder: (context, provider, _) {
+    return Consumer2<ListPlaceProvider, FoodPlaceProvider>(
+        builder: (context, provider, foodPlaceProvider, _) {
       final model = provider.listPlaceModel;
       return Scaffold(
         appBar: AppBar(
@@ -124,7 +139,11 @@ class _HomeState extends State<Home> {
                       height: 20.0,
                       child: FittedBox(
                         fit: BoxFit.cover,
-                        child: ToggleButton(notifier: notifier),
+                        child: ToggleButton(
+                          notifier: notifier,
+                          onTap: (value) => foodPlaceProvider
+                              .updateFoodPlaceStatus(status: value),
+                        ),
                       ),
                     ),
                   ],

@@ -126,13 +126,15 @@ class MenuStorage {
     List<MenuCategory>? menu = foodPlaceStorage.getMenu();
     for (MenuCategory menuCategory in menu) {
       if (menuCategory.items != null) {
+        int index = 0;
         for (MenuItem menuItem in menuCategory.items!) {
           if (menuItem.id == id) {
             menuCategory.items?.remove(menuItem);
-            menuCategory.items?.add(item);
+            menuCategory.items?.insert(index, item);
             foodPlaceStorage.updateMenu(menu);
             return;
           }
+          index++;
         }
       }
     }

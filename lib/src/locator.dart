@@ -14,6 +14,7 @@ setup() {
   locator.registerLazySingleton<OwnerService>(() => OwnerService());
   locator.registerLazySingleton<ListPlaceService>(() => ListPlaceService());
   locator.registerLazySingleton<FoodPlaceService>(() => FoodPlaceService());
+  locator.registerLazySingleton<InsightsService>(() => InsightsService());
 
   // DB services
   locator.registerLazySingleton<TokenStorage>(() => TokenStorage());

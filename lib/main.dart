@@ -38,11 +38,11 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (context) => LocationProvider.init()),
         ChangeNotifierProxyProvider2<TokenProvider, ListPlaceProvider,
-            FoodPlaceProvider>(
-          create: (context) => FoodPlaceProvider(),
-          update: (_, token, listPlace, __) => FoodPlaceProvider.init(
-              token.tokenExists, listPlace.listPlaceModel),
-        ),
+                FoodPlaceProvider>(
+            create: (context) => FoodPlaceProvider(),
+            update: (_, token, listPlace, __) => FoodPlaceProvider.init(
+                token.tokenExists, listPlace.listPlaceModel)),
+        ChangeNotifierProvider(create: (context) => InsightsProvider()),
       ],
       child: MaterialApp.router(
         theme: theme,

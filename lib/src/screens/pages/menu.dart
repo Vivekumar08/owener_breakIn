@@ -15,7 +15,6 @@ import '../../services/constants.dart';
 import '../../style/fonts.dart';
 import '../../style/loader.dart';
 import '../../style/palette.dart';
-import '../../utils/symbols.dart';
 import '../../utils/validators.dart';
 
 class Menu extends StatefulWidget {
@@ -68,13 +67,20 @@ class _MenuState extends State<Menu> {
               ),
         body: SafeArea(
           top: Platform.isAndroid, // No top safe area for IOS
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics()
-                .applyTo(const ClampingScrollPhysics()),
-            child: provider.foodPlaceModel == null || provider.state.isLoading()
-                ? _buildLoading(_buildPage(FoodPlaceModel.fromJson(menuExample),
-                    loading: true))
-                : _buildPage(provider.foodPlaceModel!),
+          child: RefreshIndicator(
+            color: Palette.primary,
+            displacement: 60.0,
+            onRefresh: () => provider.getFoodPlaceFromServer(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics()
+                  .applyTo(const ClampingScrollPhysics()),
+              child:
+                  provider.foodPlaceModel == null || provider.state.isLoading()
+                      ? _buildLoading(_buildPage(
+                          FoodPlaceModel.fromJson(menuExample),
+                          loading: true))
+                      : _buildPage(provider.foodPlaceModel!),
+            ),
           ),
         ),
       ),
@@ -135,33 +141,6 @@ class _MenuState extends State<Menu> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16.0),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Symbols.star,
-                  const SizedBox(width: 7.0),
-                  loading == true
-                      // Builds Loader for Ratings
-                      ? Container(
-                          height: 20.0,
-                          width: 32.0,
-                          decoration: BoxDecoration(
-                            color: Palette.white,
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                        )
-                      : foodPlace.rating == null
-                          ? Text('No Ratings',
-                              style:
-                                  Fonts.simTextBlack.copyWith(fontSize: 16.0))
-                          : Text(foodPlace.rating.toString(),
-                              style:
-                                  Fonts.simTextBlack.copyWith(fontSize: 16.0)),
-                  const Spacer(),
-                  const Icon(Icons.share_outlined),
-                ],
-              ),
-              const SizedBox(height: 16.0),
               Text(foodPlace.name,
                   style: Fonts.otpText.copyWith(fontSize: 16.0)),
               const SizedBox(height: 4.0),
@@ -176,9 +155,8 @@ class _MenuState extends State<Menu> {
                   const SizedBox(width: 8.0),
                   ToggleButton(
                     notifier: notifier,
-                    onTap: () => context
-                        .read<FoodPlaceProvider>()
-                        .setPreference(notifier.value),
+                    onTap: (value) =>
+                        context.read<FoodPlaceProvider>().setPreference(value),
                   ),
                 ],
               ),
@@ -202,7 +180,7 @@ class _MenuState extends State<Menu> {
         return Column(
           children: List.generate(
             menu.length,
-            (index) => Accordion(
+            (index) => MenuAccordion(
               menu: menu[index],
               expansionCallback: (category, len, isExpanded) => context
                   .read<FoodPlaceProvider>()

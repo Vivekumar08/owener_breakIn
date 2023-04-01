@@ -322,7 +322,7 @@ class ToggleButton extends StatelessWidget {
   const ToggleButton({super.key, required this.notifier, this.onTap});
 
   final ValueNotifier<bool> notifier;
-  final VoidCallback? onTap;
+  final void Function(bool)? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -337,7 +337,7 @@ class ToggleButton extends StatelessWidget {
               value: state,
               onChanged: (value) {
                 notifier.value = value;
-                onTap?.call();
+                onTap?.call(value);
               },
             );
           },

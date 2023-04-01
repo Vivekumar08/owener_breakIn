@@ -19,6 +19,7 @@ const String listPlace = '/listPlace';
 // Home Route
 const String home = '/home';
 const String insights = '$home/insights';
+const String details = '$home/insights/details';
 
 // Pages Route
 const String menu = '$home/menu';
@@ -35,8 +36,4 @@ const String help = '$profile/help';
 const String feedback = '$profile/feedback';
 const String settings = '$profile/settings';
 const String aboutUs = '$profile/aboutUs';
-const String ourStory = '$aboutUs/ourStory';
-const String ourValue = '$aboutUs/ourValue';
-const String ourMission = '$aboutUs/ourMission';
-const String ourTeam = '$aboutUs/ourTeam';
 const String suggestPlace = '$profile/suggestPlace';

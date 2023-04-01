@@ -174,6 +174,18 @@ final router = GoRouter(
         GoRoute(
           path: 'insights',
           builder: (context, state) => const Insights(),
+          routes: [
+            GoRoute(
+              path: 'details',
+              pageBuilder: (context, state) {
+                assert(state.extra is Rate);
+                return MaterialPage(
+                  fullscreenDialog: true,
+                  child: ReviewDetails(rate: state.extra as Rate),
+                );
+              },
+            ),
+          ],
         ),
 
         // Settings
@@ -204,24 +216,6 @@ final router = GoRouter(
             GoRoute(
               path: 'aboutUs',
               builder: (context, state) => const About(),
-              routes: [
-                GoRoute(
-                  path: "ourStory",
-                  builder: (context, state) => const OurStory(),
-                ),
-                GoRoute(
-                  path: "ourValue",
-                  builder: (context, state) => const OurValue(),
-                ),
-                GoRoute(
-                  path: "ourMission",
-                  builder: (context, state) => const OurMission(),
-                ),
-                GoRoute(
-                  path: "ourTeam",
-                  builder: (context, state) => const OurTeam(),
-                ),
-              ],
             ),
           ],
         ),

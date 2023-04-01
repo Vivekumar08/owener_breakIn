@@ -13,6 +13,55 @@ typedef ItemFilterCallback = bool Function(String category, MenuItem item);
 
 class Accordion extends StatefulWidget {
   const Accordion({
+    super.key,
+    required this.header,
+    this.expandedheader,
+    this.body,
+    this.initialValue,
+    this.expansionCallback,
+  });
+
+  final Widget header;
+  final Widget? expandedheader;
+  final Widget? body;
+  final bool? initialValue;
+  final void Function(bool)? expansionCallback;
+
+  @override
+  State<Accordion> createState() => _AccordionState();
+}
+
+class _AccordionState extends State<Accordion> {
+  late bool isExpanded;
+
+  @override
+  void initState() {
+    isExpanded = widget.initialValue ?? false;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        InkWell(
+          onTap: () => setState(() {
+            isExpanded = !isExpanded;
+            widget.expansionCallback?.call(isExpanded);
+          }),
+          child: widget.expandedheader == null
+              ? widget.header
+              : (isExpanded ? widget.expandedheader : widget.header),
+        ),
+        isExpanded ? widget.body ?? Container() : Container(),
+      ],
+    );
+  }
+}
+
+class MenuAccordion extends StatefulWidget {
+  // Body is by default null & corresponds to default item body
+  const MenuAccordion({
     Key? key,
     required this.menu,
     this.expansionCallback,
@@ -30,10 +79,10 @@ class Accordion extends StatefulWidget {
   final ItemFilterCallback? itemFilter;
 
   @override
-  State<Accordion> createState() => _AccordionState();
+  State<MenuAccordion> createState() => _MenuAccordionState();
 }
 
-class _AccordionState extends State<Accordion> {
+class _MenuAccordionState extends State<MenuAccordion> {
   Future<void> expansionCallback(String category, int items) async {
     setState(() {
       widget.menu.isExpanded = !widget.menu.isExpanded;
@@ -42,11 +91,12 @@ class _AccordionState extends State<Accordion> {
         ?.call(category, items, widget.menu.isExpanded);
   }
 
+  // TODO: Implement accordion in menu accordion
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _AccordionHeader(
+        _MenuAccordionHeader(
             title: '${widget.menu.name} (${widget.menu.items?.length})',
             isExpanded: widget.menu.isExpanded,
             onPressed: () async => await expansionCallback(
@@ -55,7 +105,7 @@ class _AccordionState extends State<Accordion> {
             ? Column(
                 children: [
                   for (MenuItem item in widget.menu.items!)
-                    _AccordionBody(
+                    _MenuAccordionBody(
                       item: item,
                       category: widget.menu.name,
                       onEditItem: widget.onEditItem,
@@ -71,17 +121,14 @@ class _AccordionState extends State<Accordion> {
   }
 }
 
-class _AccordionHeader extends StatelessWidget {
-  const _AccordionHeader(
-      {Key? key,
-      required this.title,
-      required this.isExpanded,
-      required this.onPressed})
+class _MenuAccordionHeader extends StatelessWidget {
+  const _MenuAccordionHeader(
+      {Key? key, required this.title, required this.isExpanded, this.onPressed})
       : super(key: key);
 
   final String title;
   final bool isExpanded;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +152,8 @@ class _AccordionHeader extends StatelessWidget {
   }
 }
 
-class _AccordionBody extends StatelessWidget {
-  const _AccordionBody(
+class _MenuAccordionBody extends StatelessWidget {
+  const _MenuAccordionBody(
       {Key? key,
       required this.item,
       required this.category,
@@ -180,7 +227,7 @@ class _AccordionBody extends StatelessWidget {
                     style: Fonts.otpText.copyWith(fontSize: 16.0)),
                 ToggleButton(
                   notifier: ValueNotifier(item.isAvailable),
-                  onTap: () => onUpdateStatus?.call(category, item),
+                  onTap: (value) => onUpdateStatus?.call(category, item),
                 ),
               ],
             ),

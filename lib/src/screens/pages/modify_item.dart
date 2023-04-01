@@ -132,6 +132,7 @@ class _ModifyItemState extends State<ModifyItem> {
                         isVeg: !isNonVeg.value,
                       ),
                       category: category.text,
+                      sameCategory: category.text == widget.menuCategory,
                     )
                         .whenComplete(
                       () {

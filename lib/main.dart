@@ -31,7 +31,18 @@ class MyApp extends StatelessWidget {
             create: (context) => OwnerProvider.init(),
             update: (_, token, auth, __) => OwnerProvider.fromProvider(
                 token.tokenExists, auth.state.isAuthenticated())),
-        Provider<ProfileProvider>(create: (context) => ProfileProvider())
+        Provider<ProfileProvider>(create: (context) => ProfileProvider()),
+        ChangeNotifierProxyProvider<TokenProvider, ListPlaceProvider>(
+          create: (context) => ListPlaceProvider(),
+          update: (_, token, __) => ListPlaceProvider.init(token.tokenExists),
+        ),
+        ChangeNotifierProvider(create: (context) => LocationProvider.init()),
+        ChangeNotifierProxyProvider2<TokenProvider, ListPlaceProvider,
+                FoodPlaceProvider>(
+            create: (context) => FoodPlaceProvider(),
+            update: (_, token, listPlace, __) => FoodPlaceProvider.init(
+                token.tokenExists, listPlace.listPlaceModel)),
+        ChangeNotifierProvider(create: (context) => InsightsProvider()),
       ],
       child: MaterialApp.router(
         theme: theme,

@@ -18,6 +18,7 @@ class InputField extends StatelessWidget {
     required this.hintText,
     required this.controller,
     this.keyboardType,
+    this.readOnly,
     this.isPhone = false,
     this.expands = false,
     this.height,
@@ -32,6 +33,7 @@ class InputField extends StatelessWidget {
   final String hintText;
   final TextEditingController controller;
   final TextInputType? keyboardType;
+  final bool? readOnly;
   final bool isPhone;
   final bool expands;
   final double? height;
@@ -53,6 +55,7 @@ class InputField extends StatelessWidget {
             height: height == null ? null : height! + 12,
             child: TextFormField(
               controller: controller,
+              readOnly: readOnly ?? false,
               style: Fonts.inputText.copyWith(color: Palette.text),
               textAlignVertical: TextAlignVertical.top,
               expands: expands,

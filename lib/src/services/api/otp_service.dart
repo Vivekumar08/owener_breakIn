@@ -14,7 +14,7 @@ class OtpServiceViaEmail {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(otpTimeout);
+      ).timeout(duration_10);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});
@@ -37,7 +37,7 @@ class OtpServiceViaEmail {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(otpTimeout);
+      ).timeout(duration_10);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});
@@ -60,7 +60,7 @@ class OtpServiceViaEmail {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(otpTimeout);
+      ).timeout(duration_10);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});
@@ -84,7 +84,7 @@ class OtpServiceViaEmail {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-      ).timeout(otpTimeout);
+      ).timeout(duration_10);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});

@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart' show XFile;
-import '../style/snack_bar.dart';
+import 'package:flutter/painting.dart';
 import 'constants.dart';
 import '../locator.dart';
 import '../services/api/api.dart';
@@ -30,8 +29,13 @@ class ProfileProvider {
 
   Future<void> logout() async {
     locator.get<TokenStorage>().clearToken();
-    await locator.isReady<UserStorage>();
-    locator.get<UserStorage>().deleteUser();
+    await locator.isReady<OwnerStorage>();
+    locator.get<OwnerStorage>().deleteOwner();
+    await locator.isReady<ListPlaceStorage>();
+    locator.get<ListPlaceStorage>().deletelistPlace();
+    await locator.isReady<FoodPlaceStorage>();
+    locator.get<FoodPlaceStorage>().deleteFoodPlace();
+    PaintingBinding.instance.imageCache.clear();
     debugPrint('logged Out Successfully');
   }
 
@@ -45,21 +49,6 @@ class ProfileProvider {
         .suggestPlace(token!, placeName, address, contact);
     if (response[code] != 200) {
       debugPrint(response.toString());
-    }
-  }
-
-  Future<void> uploadProfilePic(XFile file) async {
-    print('uploading');
-    String? token = await locator.get<TokenStorage>().getToken();
-    Map<String, dynamic> response =
-        await locator.get<ProfileService>().uploadProfilePic(token!, file);
-    print(response);
-    if (response[code] == 200) {
-      showSnackBar(response[msg].toString());
-    } else {
-      if (response[error] != null) {
-        showSnackBar(response[error].toString());
-      }
     }
   }
 }

@@ -3,25 +3,47 @@ import '../style/fonts.dart';
 import '../style/palette.dart';
 
 class Dropdown extends StatefulWidget {
-  const Dropdown(
+  Dropdown(
       {super.key,
       required this.inputText,
       required this.items,
-      required this.controller});
+      required this.controller,
+      this.initialValue,
+      this.validator})
+      : assert(initialValue == null ||
+            items.isEmpty ||
+            items.contains(initialValue));
 
   final String inputText;
   final List<String> items;
   final TextEditingController controller;
+  final String? initialValue;
+  final String? Function(String?)? validator;
 
   @override
   State<Dropdown> createState() => _DropdownState();
 }
 
 class _DropdownState extends State<Dropdown> {
+  late String dropdownValue;
+
+  @override
+  void initState() {
+    if (widget.initialValue == null) {
+      dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
+    } else {
+      dropdownValue = widget.initialValue!;
+    }
+    widget.controller.text = dropdownValue;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String dropdownValue = widget.items.isNotEmpty ? widget.items.first : '';
-    widget.controller.text = dropdownValue;
+    if (dropdownValue.isEmpty && widget.items.isNotEmpty) {
+      dropdownValue = widget.items.first;
+      widget.controller.text = dropdownValue;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -34,8 +56,9 @@ class _DropdownState extends State<Dropdown> {
           alignedDropdown: true,
           child: DropdownButtonFormField<String>(
             value: dropdownValue,
-            menuMaxHeight: 250,
+            menuMaxHeight: 280,
             style: Fonts.inputText.copyWith(color: Palette.text),
+            validator: widget.validator,
             decoration: InputDecoration(
               filled: true,
               fillColor: Palette.inputField,

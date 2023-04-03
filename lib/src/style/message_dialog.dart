@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 Future<void> showMessageDialog(
         {required BuildContext context,
         required List<Widget> children,
+        bool dismissible = true,
         EdgeInsetsGeometry? contentPadding}) =>
     showDialog(
       context: context,
+      barrierDismissible: dismissible,
       builder: (context) => SimpleDialog(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(16.0))),

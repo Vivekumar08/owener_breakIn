@@ -1,3 +1,4 @@
+import 'dart:io' show File;
 
 // Contact Validation
 String? contactValidation(String? input) {
@@ -31,6 +32,16 @@ String? noSpecialCharacterValidation(String? input) {
   return null;
 }
 
+// Number Validation
+String? numberValidation(String? input) {
+  if (input == null || input.trim().isEmpty) {
+    return 'Field is required';
+  } else if (RegExp(r'^[0-9]*$').hasMatch(input)) {
+    return null;
+  }
+  return 'Invalid Input';
+}
+
 // Null Validation
 String? nullValidation(String? input) {
   if (input == null || input.trim().isEmpty) {
@@ -39,6 +50,7 @@ String? nullValidation(String? input) {
   return null;
 }
 
+// Password Validation
 String? passwordValidation(String? input) {
   if (input == null || input.trim().isEmpty) {
     return 'Field is required';
@@ -50,4 +62,25 @@ String? passwordValidation(String? input) {
     return null;
   }
   return 'Weak Password';
+}
+
+// Null File Validation
+// limit (in kb)
+String? Function(File?)? fileValidationWithSize({int limit = 1000}) {
+  return (File? file) {
+    if (file == null || !file.existsSync() || file.lengthSync() == 0) {
+      return 'Field is required';
+    } else if (file.lengthSync() > limit * 1000) {
+      if (limit >= 1000) {
+        if (limit % 1000 == 0) {
+          return 'File mustn\'t be greater than ${limit ~/ 1000} mb';
+        } else {
+          return 'File mustn\'t be greater than ${(limit / 1000)} mb';
+        }
+      } else {
+        return 'File mustn\'t be greater than $limit kb';
+      }
+    }
+    return null;
+  };
 }

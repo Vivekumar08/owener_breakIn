@@ -1,20 +1,79 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' hide MenuBar;
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import '../../components/button.dart';
+import '../../models/list_place.dart';
+import '../../providers/providers.dart';
 import '../../router/constants.dart';
 import '../../style/fonts.dart';
+import '../../style/message_dialog.dart';
+import '../../style/palette.dart';
 import '../../utils/images.dart';
 import '../../utils/symbols.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
-  Widget _buildOptions(
-          Image image, String text, String route, BuildContext context) =>
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  ValueNotifier<bool> notifier = ValueNotifier(true);
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) {
+        _buildMessage(context.read<ListPlaceProvider>().listPlaceModel?.status);
+        final provider = context.read<FoodPlaceProvider>();
+        if (provider.foodPlaceModel == null) {
+          provider.getFoodPlace().whenComplete(() => notifier.value =
+              context.read<FoodPlaceProvider>().foodPlaceModel?.status ?? true);
+        }
+      },
+    );
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    notifier.dispose();
+    super.dispose();
+  }
+
+  void _buildMessage(ListPlaceStatus? status) {
+    setState(() {});
+    if (status == ListPlaceStatus.verifying) {
+      showMessageDialog(dismissible: false, context: context, children: [
+        Text(
+          'Your Document have been submitted successfully . As soon '
+          'as our team verifies your credentials, we will contact you.',
+          style: Fonts.simText,
+        )
+      ]);
+    } else if (status == ListPlaceStatus.unverified) {
+      showMessageDialog(dismissible: false, context: context, children: [
+        Text(
+          'For certain issues, you haven\'t been verified. '
+          'For further concerns, you can contact us.',
+          style: Fonts.simText,
+        )
+      ]);
+    }
+  }
+
+  Widget _buildOptions(Image image, String text, String route) =>
       GestureDetector(
         onTap: () => context.go(route),
         child: Column(children: [
-          image,
+          Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                border: Border.all(color: Palette.greyNormal),
+              ),
+              child: image),
           const SizedBox(height: 8.0),
           Text(text, style: Fonts.otpText.copyWith(fontSize: 14.0))
         ]),
@@ -22,69 +81,88 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: const Padding(
-          padding: EdgeInsets.only(left: 20.0),
-          child: Icon(Icons.location_on_outlined),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return Consumer2<ListPlaceProvider, FoodPlaceProvider>(
+        builder: (context, provider, foodPlaceProvider, _) {
+      final model = provider.listPlaceModel;
+      return Scaffold(
+        appBar: AppBar(
+          leading: const Padding(
+            padding: EdgeInsets.only(left: 20.0),
+            child: Icon(Icons.location_on_outlined),
+          ),
+          title: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('376 Ground Floor, Mukherjee Nagar,',
-                    textScaleFactor:
-                        MediaQuery.of(context).textScaleFactor.clamp(1, 1.2)),
-                const SizedBox(width: 12.0),
-                const Icon(Icons.keyboard_arrow_down),
-              ],
-            ),
-            Text('Delhi, India, 110009',
-                textScaleFactor:
-                    MediaQuery.of(context).textScaleFactor.clamp(1, 1.2)),
-          ],
-        ),
-        leadingWidth: 40.0,
-        actions: [
-          GestureDetector(
-              onTap: () => context.go(profile), child: Symbols.profile),
-          const SizedBox(width: 24.0),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Cluster Innovation Centre',
-                  style: Fonts.otpText.copyWith(fontSize: 14.0),
-                ),
-                SizedBox(
-                  height: 20.0,
-                  child: FittedBox(
-                      fit: BoxFit.cover,
-                      child:
-                          CupertinoSwitch(value: true, onChanged: (value) {})),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: model != null
+                          ? Text(model.address,
+                              maxLines: 2,
+                              textScaleFactor: MediaQuery.of(context)
+                                  .textScaleFactor
+                                  .clamp(1, 1.2))
+                          : Container(),
+                    ),
+                    const SizedBox(width: 12.0),
+                  ],
                 ),
               ],
             ),
-            const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildOptions(Images.mMenu, 'Manage Menu', menu, context),
-                _buildOptions(
-                    Images.insights, 'Customer Insights', insights, context)
-              ],
-            )
+          ),
+          leadingWidth: 40.0,
+          actions: [
+            GestureDetector(
+                onTap: () => context.go(profile), child: Symbols.profile),
+            const SizedBox(width: 8.0),
           ],
         ),
-      ),
-    );
+        body: AbsorbPointer(
+          absorbing: model == null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 22.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    model != null
+                        ? Text(
+                            model.placeName,
+                            style: Fonts.otpText.copyWith(fontSize: 14.0),
+                          )
+                        : Container(),
+                    SizedBox(
+                      height: 20.0,
+                      child: FittedBox(
+                        fit: BoxFit.cover,
+                        child: ToggleButton(
+                          notifier: notifier,
+                          onTap: (value) => foodPlaceProvider
+                              .updateFoodPlaceStatus(status: value),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildOptions(Images.mMenu, 'Manage Menu',
+                        model?.foodPlaceId == null ? addFoodPlace : menu),
+                    _buildOptions(
+                        Images.insights, 'Customer Insights', insights)
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 }

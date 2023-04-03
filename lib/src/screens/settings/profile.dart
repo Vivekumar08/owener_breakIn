@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,8 +6,11 @@ import 'package:provider/provider.dart';
 import '../../components/routing_list.dart';
 import '../../providers/providers.dart';
 import '../../router/constants.dart';
+import '../../services/constants.dart';
+import '../../style/bottom_sheet.dart';
 import '../../style/fonts.dart';
 import '../../style/palette.dart';
+import '../../style/snack_bar.dart';
 import '../../utils/symbols.dart';
 
 class Profile extends StatelessWidget {
@@ -37,20 +40,20 @@ class Profile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Consumer<OwnerProvider>(builder: (context, provider, _) {
-                    final user = provider.user;
-                    return user == null
+                    final owner = provider.owner;
+                    return owner == null
                         ? Container()
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(user.FullName,
+                              Text(owner.fullName,
                                   style: Fonts.subHeading.copyWith(
                                       color: Palette.text, fontSize: 16.0)),
                               const SizedBox(height: 8.0),
-                              Text(user.Email ?? 'Email',
+                              Text(owner.email ?? 'Email',
                                   style: Fonts.medTextBlack
                                       .copyWith(fontSize: 12.0)),
-                              Text(user.PhoneNo ?? 'Phone No.',
+                              Text(owner.phoneNo ?? 'Phone No.',
                                   style: Fonts.medTextBlack
                                       .copyWith(fontSize: 12.0)),
                               const Spacer(),
@@ -109,57 +112,60 @@ class ProfilePic extends StatefulWidget {
 
 class _ProfilePicState extends State<ProfilePic> {
   final ImagePicker _picker = ImagePicker();
-  XFile? file;
+  String? imageUrl;
+
+  @override
+  void didChangeDependencies() {
+    final provider = Provider.of<OwnerProvider>(context);
+    if (provider.owner != null && provider.owner!.profilePic != null) {
+      imageUrl = '$fileInfo/${provider.owner!.profilePic!}';
+      setState(() {});
+    }
+    super.didChangeDependencies();
+  }
+
+  void uploadImage(OwnerProvider provider, {bool gallery = false}) async {
+    XFile? file = await _picker
+        .pickImage(
+            source: gallery ? ImageSource.gallery : ImageSource.camera,
+            imageQuality: 50)
+        .whenComplete(() => context.pop());
+    if (file != null) {
+      if (await file.length() > 1000000) {
+        showSnackBar('File should be less than 1 mb');
+        return;
+      }
+      provider.uploadProfilePic(file);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProfileProvider>(context);
+    final provider = Provider.of<OwnerProvider>(context);
     return InkWell(
       customBorder: const CircleBorder(),
-      onTap: () => showModalBottomSheet(
-        context: context,
-        builder: (context) => SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () async {
-                    final XFile? photo = await _picker.pickImage(
-                        source: ImageSource.camera, imageQuality: 80);
-                  },
-                  child: const ListTile(
-                    leading: Icon(Icons.camera),
-                    title: Text('Camera'),
+      onTap: () => provider.state.updating()
+          ? showSnackBar('Profile Pic is getting uploaded...')
+          : showCustomBottomSheet(
+              context: context,
+              children: <CustomBottomSheetChild>[
+                  CustomBottomSheetChild(
+                    title: 'Camera',
+                    icon: Icons.camera,
+                    onTap: () async => uploadImage(provider),
                   ),
-                ),
-                InkWell(
-                  onTap: () async {
-                    file = await _picker
-                        .pickImage(source: ImageSource.gallery)
-                        .whenComplete(() {
-                      setState(() {});
-                      context.pop();
-                    });
-                    if (file != null) {
-                      provider.uploadProfilePic(file!);
-                    }
-                  },
-                  child: const ListTile(
-                    leading: Icon(Icons.image),
-                    title: Text('Gallery'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+                  CustomBottomSheetChild(
+                    title: 'Gallery',
+                    icon: Icons.image,
+                    onTap: () async => uploadImage(provider, gallery: true),
+                  )
+                ]),
       child: CircleAvatar(
         radius: 40.0,
         backgroundColor: Palette.background,
-        backgroundImage: file == null
+        backgroundImage: imageUrl == null
             ? Symbols.profile.image
-            : Image.file(File(file!.path)).image,
+            : CachedNetworkImageProvider(imageUrl!),
       ),
     );
   }

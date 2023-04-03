@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart' show MaterialPage;
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../models/menu.dart';
+import '../models/models.dart';
 import '../providers/providers.dart';
 import '../screens/home/home.dart';
-import '../screens/location/detected_location.dart';
+import '../screens/location/location_screen.dart';
 import '../screens/onboarding/forgot_passwd.dart';
 import '../screens/onboarding/list_place.dart';
 import '../screens/onboarding/login_with_mail.dart';
@@ -16,7 +17,7 @@ import '../screens/onboarding/password_changed.dart';
 import '../screens/onboarding/register_with_mail.dart';
 import '../screens/onboarding/register_with_otp.dart';
 import '../screens/onboarding/register_with_phone.dart';
-import '../screens/pages/cover_image.dart';
+import '../screens/pages/add_food_place.dart';
 import '../screens/pages/insights.dart';
 import '../screens/pages/menu.dart';
 import '../screens/pages/add_new_item.dart';
@@ -32,7 +33,6 @@ import '../style/transitions.dart';
 import 'constants.dart';
 
 final router = GoRouter(
-  initialLocation: loginWithMail,
   routes: [
     GoRoute(
       path: '/',
@@ -40,6 +40,8 @@ final router = GoRouter(
       redirect: (context, GoRouterState state) async {
         bool token = await context.read<TokenProvider>().doesTokenExists();
         if (token) {
+          // Enter initial location here to test
+          // Overrider token not initialzed error
           return home;
         } else {
           return null;
@@ -98,8 +100,9 @@ final router = GoRouter(
     ),
 
     GoRoute(
-      path: '/detectedLocation',
-      builder: (context, state) => const DetectedLocation(),
+      path: '/location',
+      pageBuilder: (context, state) =>
+          const MaterialPage(fullscreenDialog: true, child: LocationScreen()),
     ),
 
     GoRoute(
@@ -112,35 +115,55 @@ final router = GoRouter(
       path: '/home',
       pageBuilder: (context, state) =>
           FadeTransitionPage(key: state.pageKey, child: const Home()),
+      redirect: (context, GoRouterState state) async {
+        final listPlaceProvider = context.read<ListPlaceProvider>();
+        await listPlaceProvider.getListPlace();
+        if (listPlaceProvider.listPlaceModel?.status == null) {
+          return listPlace;
+        } else {
+          return null;
+        }
+      },
       routes: [
+        GoRoute(
+          path: 'addFoodPlace',
+          builder: (context, state) => const AddFoodPlace(),
+        ),
         GoRoute(
           path: 'menu',
           builder: (context, state) => const Menu(),
           routes: [
             GoRoute(
               path: 'coverImage',
-              builder: (context, state) => const CoverImage(),
+              pageBuilder: (context, state) => const MaterialPage(
+                  fullscreenDialog: true, child: CoverImage()),
             ),
-
             // Modify Item takes a MenuItem object & menuCategory String
             // to create Modify Item Page
             GoRoute(
-              path: 'modifyItem/:category',
-              builder: (context, state) {
+              path: 'modifyItem',
+              pageBuilder: (context, state) {
                 assert(state.extra is MenuItem);
+                assert(state.queryParams['category'] != null);
                 MenuItem menuItem = state.extra as MenuItem;
-                return ModifyItem(
-                    menuItem: menuItem, menuCategory: state.params['category']);
+                return MaterialPage(
+                  fullscreenDialog: true,
+                  child: ModifyItem(
+                      menuItem: menuItem,
+                      menuCategory: state.queryParams['category']!),
+                );
               },
             ),
 
             GoRoute(
               path: 'addNewItem',
-              builder: (context, state) => const AddNewItem(),
+              pageBuilder: (context, state) => const MaterialPage(
+                  fullscreenDialog: true, child: AddNewItem()),
               routes: [
                 GoRoute(
                   path: 'addNewCategory',
-                  builder: (context, state) => const AddNewCategory(),
+                  pageBuilder: (context, state) => const MaterialPage(
+                      fullscreenDialog: true, child: AddNewCategory()),
                 ),
               ],
             ),
@@ -151,6 +174,18 @@ final router = GoRouter(
         GoRoute(
           path: 'insights',
           builder: (context, state) => const Insights(),
+          routes: [
+            GoRoute(
+              path: 'details',
+              pageBuilder: (context, state) {
+                assert(state.extra is Rate);
+                return MaterialPage(
+                  fullscreenDialog: true,
+                  child: ReviewDetails(rate: state.extra as Rate),
+                );
+              },
+            ),
+          ],
         ),
 
         // Settings
@@ -181,24 +216,6 @@ final router = GoRouter(
             GoRoute(
               path: 'aboutUs',
               builder: (context, state) => const About(),
-              routes: [
-                GoRoute(
-                  path: "ourStory",
-                  builder: (context, state) => const OurStory(),
-                ),
-                GoRoute(
-                  path: "ourValue",
-                  builder: (context, state) => const OurValue(),
-                ),
-                GoRoute(
-                  path: "ourMission",
-                  builder: (context, state) => const OurMission(),
-                ),
-                GoRoute(
-                  path: "ourTeam",
-                  builder: (context, state) => const OurTeam(),
-                ),
-              ],
             ),
           ],
         ),

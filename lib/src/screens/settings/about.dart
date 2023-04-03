@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../components/routing_list.dart';
-import '../../router/constants.dart';
+import '../../components/accordion.dart';
 import '../../style/fonts.dart';
+import '../../style/palette.dart';
 import '../../utils/symbols.dart';
+
+Map<String, String> about = {
+  "Our Values": 'Everyone strives to be a better person next day. We too strive '
+      'for that. To achieve this, trust is crucial which necessitates transparency '
+      'through clarity. All four values evolve slowly and organically to achieve '
+      'quality over quantity.',
+  "Our Mission": 'At breakIN, our objective is to make better food easily '
+      'available and accessible to working professionals at their workplace by '
+      'incorporating technology in omni-channel framework to fuel today’s workforce '
+      'for tomorrow\'s India.',
+  "Our Vision": 'breakIN aspires to be mother who reminds you not to compromise '
+      'with food, a friend who brings you comfort and delight when you eat and a '
+      'beloved about whom you boast. We will travel with you right from school to '
+      'university to your office.'
+};
+
+List<String> profile = [
+  'Akshat Jain_Ideator_https://www.linkedin.com/in/akshat-jain-8053115018/_akshatjain281@gmail.com',
+  'Vivek Kumar_Full Stack Develper_https://www.linkedin.com/in/vivek-kumar-1b65a2201/_vivekumar2003bsr@gmail.com',
+  'Dushant Bansal_Frontend Developer_https://www.linkedin.com/in/dushant-bansal-a4ba78224/_dushantbansal630@gmail.com',
+  'Ankit_UI/UX_https://www.linkedin.com/in/ankitjhadesign1405/_jhaankitkumar12@gmail.com',
+  'Rohan Babbar_Tech Operations_https://www.linkedin.com/in/rohan-babbar-2020/_rohanbabbar0408@gmail.com',
+];
 
 class About extends StatelessWidget {
   const About({super.key});
@@ -17,67 +40,66 @@ class About extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(22.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            RoutingList(title: "Our Story", route: ourStory),
-            RoutingList(title: "Our Values", route: ourValue),
-            RoutingList(title: "Our Mission", route: ourMission),
-            RoutingList(title: "Our Team", route: ourTeam),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics()
+              .applyTo(const ClampingScrollPhysics()),
+          children: [
+            for (String key in about.keys)
+              Accordion(
+                header: _buildHeader(key),
+                expandedheader: _buildExpandedHeader(key),
+                body: _buildBody(about[key]!),
+              ),
+            // Custom Accordion
+            Accordion(
+              header: _buildHeader("Our Team"),
+              expandedheader: _buildExpandedHeader("Our Team"),
+              body: Column(
+                  children: List.generate(profile.length, (index) {
+                List list = profile[index].split('_');
+                return _buildProfile(list[0], list[1], list[2], list[3]);
+              })),
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-class OurStory extends StatelessWidget {
-  const OurStory({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        leadingWidth: 72.0,
-        title: Text("Our Story", style: Fonts.appBarTitle),
-      ),
+  Column _buildBody(String text) {
+    return Column(
+      children: [
+        Text(text,
+            style: Fonts.simTextBlack.copyWith(letterSpacing: 0),
+            textAlign: TextAlign.justify),
+        const SizedBox(height: 10),
+        Container(color: Palette.greyNormal, height: 1),
+      ],
     );
   }
-}
 
-class OurValue extends StatelessWidget {
-  const OurValue({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        leadingWidth: 72.0,
-        title: Text("Our Value", style: Fonts.appBarTitle),
-      ),
+  ListTile _buildHeader(String title) {
+    return ListTile(
+      title: Text(title, style: Fonts.buttonText.copyWith(color: Palette.text)),
+      contentPadding: EdgeInsets.zero,
+      horizontalTitleGap: 0,
+      dense: true,
+      trailing: const Icon(Icons.keyboard_arrow_down, size: 32),
+      shape: UnderlineInputBorder(
+          borderSide: BorderSide(color: Palette.greyNormal)),
     );
   }
-}
 
-class OurMission extends StatelessWidget {
-  const OurMission({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        leadingWidth: 72.0,
-        title: Text("Our Mission", style: Fonts.appBarTitle),
-      ),
+  ListTile _buildExpandedHeader(String title) {
+    return ListTile(
+      title: Text(title, style: Fonts.buttonText.copyWith(color: Palette.text)),
+      contentPadding: EdgeInsets.zero,
+      horizontalTitleGap: 0,
+      dense: true,
+      trailing: const Icon(Icons.keyboard_arrow_up, size: 32),
+      shape: null,
     );
   }
-}
-
-class OurTeam extends StatelessWidget {
-  const OurTeam({super.key});
 
   Future<void> _launchUrl(String url) async {
     if (!await launchUrl(Uri.parse(url))) {
@@ -85,95 +107,28 @@ class OurTeam extends StatelessWidget {
     }
   }
 
-  _buildProfile({
-    required String name,
-    Image? image,
-    required String role,
-    String? linkedin,
-    String? mail,
-  }) =>
-      Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
+  ListTile _buildProfile(
+      String name, String role, String? linkedin, String? mail) {
+    return ListTile(
+      title: Text(name, style: Fonts.simTextBlack),
+      subtitle: Text(role, style: Fonts.simTextBlack),
+      trailing: SizedBox(
+        width: 80.0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            CircleAvatar(radius: 60.0, backgroundImage: image?.image),
-            const SizedBox(height: 8.0),
-            Text(name, style: Fonts.appBarTitle),
-            const SizedBox(height: 4.0),
-            Text(role, style: Fonts.appBarTitle.copyWith(fontSize: 12.0)),
-            const SizedBox(height: 4.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                GestureDetector(
-                    onTap: () => linkedin == null ? null : _launchUrl(linkedin),
-                    child: Symbols.linkedinIcon),
-                const SizedBox(width: 16.0),
-                GestureDetector(
-                    onTap: () =>
-                        mail == null ? null : _launchUrl('mailto:$mail'),
-                    child: Symbols.gmailIcon)
-              ],
-            )
-          ],
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        leadingWidth: 72.0,
-        title: Text("Our Team", style: Fonts.appBarTitle),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22.0),
-        child: ListView(
-          physics: const ClampingScrollPhysics(),
-          children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              _buildProfile(name: 'Pintu', role: 'Main Ideator'),
-              _buildProfile(
-                  name: 'Akshat Jain',
-                  role: 'Ideator',
-                  linkedin:
-                      'https://www.linkedin.com/in/akshat-jain-8053115018/',
-                  mail: 'akshatjain281@gmail.com')
-            ]),
-            const SizedBox(height: 24.0),
-            Text("Dev", style: Fonts.appBarTitle),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-              _buildProfile(
-                  name: 'Vivek Kumar',
-                  role: 'Full Stack Develper',
-                  linkedin:
-                      'https://www.linkedin.com/in/vivek-kumar-1b65a2201/',
-                  mail: 'vivekumar2003bsr@gmail.com'),
-              _buildProfile(
-                  name: 'Dushant Bansal',
-                  role: 'Frontend Developer',
-                  linkedin:
-                      'https://www.linkedin.com/in/dushant-bansal-a4ba78224/',
-                  mail: 'dushantbansal630@gmail.com')
-            ]),
-            const SizedBox(height: 24.0),
-            Text("Other", style: Fonts.appBarTitle),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildProfile(name: 'Ankit', role: 'Advisor'),
-                _buildProfile(
-                    name: 'Rohan Babbar',
-                    role: 'Advisor',
-                    linkedin: 'https://www.linkedin.com/in/rohan-babbar-2020/',
-                    mail: 'rohanbabbar0408@gmail.com'),
-              ],
-            ),
+            GestureDetector(
+                onTap: () => linkedin == null ? null : _launchUrl(linkedin),
+                child: Symbols.linkedinIcon),
+            const SizedBox(width: 16.0),
+            GestureDetector(
+                onTap: () => mail == null ? null : _launchUrl('mailto:$mail'),
+                child: Symbols.gmailIcon)
           ],
         ),
       ),
+      minVerticalPadding: 0,
+      dense: true,
     );
   }
 }

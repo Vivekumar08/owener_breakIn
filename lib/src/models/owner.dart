@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names
-
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'generated/owner.g.dart';
@@ -8,22 +6,30 @@ part 'generated/owner.g.dart';
 @JsonSerializable()
 class Owner extends HiveObject {
   Owner({
-    required this.FullName,
-    this.Email,
-    this.PhoneNo,
-    this.ProfilePic,
-    this.Location,
+    required this.fullName,
+    this.email,
+    this.phoneNo,
+    this.profilePic,
+    this.location,
   });
+
   @HiveField(0)
-  final String FullName;
+  @JsonKey(name: 'FullName')
+  final String fullName;
+
   @HiveField(1)
-  final String? Email;
+  @JsonKey(name: 'Email')
+  String? email;
+
   @HiveField(2)
-  final String? PhoneNo;
+  @JsonKey(name: 'PhoneNo')
+  String? phoneNo;
+
   @HiveField(3)
-  final String? ProfilePic;
+  String? profilePic;
+
   @HiveField(4)
-  final String? Location;
+  String? location;
 
   factory Owner.fromJson(Map<String, dynamic> json) => _$OwnerFromJson(json);
 

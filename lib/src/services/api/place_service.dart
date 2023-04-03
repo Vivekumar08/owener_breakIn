@@ -29,7 +29,7 @@ class PlaceService {
           'Content-Type': 'application/json; charset=UTF-8',
           HttpHeaders.authorizationHeader: token,
         },
-      ).timeout(settingsTimeout);
+      ).timeout(duration_5);
 
       body = jsonDecode(response.body);
       body.addAll({'code': response.statusCode});

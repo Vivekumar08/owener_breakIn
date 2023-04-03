@@ -76,14 +76,8 @@ class _LocationScreenState extends State<LocationScreen>
                         borderRadius: BorderRadius.circular(16.0),
                         color: Palette.stroke),
                     width: double.maxFinite,
-                    height: location.state.detected()
-                        ? 218
-                        : location.state.manual()
-                            ? 374
-                            : location.state.denied()
-                                ? 277
-                                : 184,
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         const SizedBox(height: 24.0),
                         location.state.denied() ||
@@ -103,6 +97,7 @@ class _LocationScreenState extends State<LocationScreen>
                                     : location.state.uninitialized()
                                         ? _buildUninitialized(location)
                                         : _buildDetecting(location),
+                        const SizedBox(height: 24.0),
                       ],
                     ),
                   );
@@ -140,7 +135,7 @@ class _LocationScreenState extends State<LocationScreen>
 
   Widget _buildLoader(double width) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: const EdgeInsets.only(top: 10.0),
       child: Container(
         height: 6.0,
         width: width,

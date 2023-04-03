@@ -1,6 +1,11 @@
+import 'dart:async' show TimeoutException;
+import 'dart:convert' show json;
+import 'dart:io' show SocketException;
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geocode;
+import 'package:http/http.dart' as http;
 import '../../models/models.dart';
+import '../constants.dart';
 
 class LocationService {
   /// Determine the current position of the device.
@@ -59,14 +64,30 @@ class LocationService {
     );
   }
 
-  Future<Location> getLocationFromAddress(String address) async {
-    List<geocode.Location> locationList =
-        await geocode.locationFromAddress(address);
-    if (locationList.isEmpty) {
+  Future<Map<String, dynamic>> getCoordinatesFromServer(String address) async {
+    Map<String, dynamic> body = {};
+    String query = address.split(RegExp(' ')).join('+');
+    query = query.split(',').join('+');
+
+    try {
+      http.Response response = await http.get(
+        Uri.parse(
+            'https://nominatim.openstreetmap.org/search?q=$query&format=json&polygon=1&addressdetails=1&limit=1'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      ).timeout(const Duration(seconds: 5));
+
+      body = json.decode(response.body).cast<Map<String, dynamic>>()[0];
+      body.addAll({'code': response.statusCode});
+    } on TimeoutException catch (_) {
+      timeOut();
+    } on SocketException catch (_) {
+      noInternet();
+    } catch (e) {
       return Future.error('ADDRESS_NOT_FOUND');
     }
-    geocode.Location l = locationList.first;
-    return Location(lat: l.latitude, lng: l.longitude, address: address);
+    return body;
   }
 
   Future<void> openLocationSettings() async =>

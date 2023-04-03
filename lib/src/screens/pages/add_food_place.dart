@@ -54,6 +54,7 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
   Widget build(BuildContext context) {
     final provider = Provider.of<FoodPlaceProvider>(context);
     final locationProvider = Provider.of<LocationProvider>(context);
+    address.text = locationProvider.location?.address ?? '';
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -96,6 +97,7 @@ class _AddFoodPlaceState extends State<AddFoodPlace> {
                 hintText: "Enter Address",
                 controller: address,
                 keyboardType: TextInputType.streetAddress,
+                readOnly: true,
                 validator: nullValidation),
             InputField(
                 inputText: "Landmark",

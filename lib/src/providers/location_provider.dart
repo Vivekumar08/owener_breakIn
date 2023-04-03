@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../services/location/location.dart';
 import '../locator.dart';
 import '../models/models.dart';
+import 'constants.dart';
 
 // Location Provider Constants
 // ignore: constant_identifier_names
@@ -15,7 +16,8 @@ extension LocationExtension on LocationState {
 }
 
 class LocationProvider extends ChangeNotifier {
-  Location? location;
+  Location? _location;
+  Location? get location => _location;
 
   LocationState _state = LocationState.Uninitialized;
   LocationState get state => _state;
@@ -27,10 +29,11 @@ class LocationProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Uses Geocode Package
   Future<void> getLocation() async {
     _changeLocationState(LocationState.Detecting);
     try {
-      location = await locator.get<LocationService>().getLocation();
+      _location = await locator.get<LocationService>().getLocation();
       _changeLocationState(LocationState.Detected);
     } catch (e) {
       switch (e) {
@@ -45,12 +48,23 @@ class LocationProvider extends ChangeNotifier {
     }
   }
 
+  // Uses open street Map
   Future<void> getLocationFromAddress(String address) async {
     _changeLocationState(LocationState.Detecting);
     try {
-      location =
-          await locator.get<LocationService>().getLocationFromAddress(address);
-      _changeLocationState(LocationState.Detected);
+      Map<String, dynamic> response = await locator
+          .get<LocationService>()
+          .getCoordinatesFromServer(address);
+
+      if (response[code] == 200) {
+        _location = Location(
+            lat: double.parse(response["lat"]),
+            lng: double.parse(response["lon"]),
+            address: response["display_name"]);
+        _changeLocationState(LocationState.Detected);
+      } else {
+        _changeLocationState(LocationState.Uninitialized);
+      }
     } catch (e) {
       switch (e) {
         case 'ADDRESS_NOT_FOUND':

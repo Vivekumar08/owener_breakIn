@@ -1,8 +1,10 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart' as geocode;
+import '../../models/models.dart';
 
 class LocationService {
   /// Determine the current position of the device.
-  Future<Position> getLocationAsCoordinates() async {
+  Future<Location> getLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -26,8 +28,16 @@ class LocationService {
         // returned true. According to Android guidelines
         // your App should show an explanatory UI now.
 
-        Position? position = await Geolocator.getLastKnownPosition();
-        if (position != null) return position;
+        Position? p = await Geolocator.getLastKnownPosition();
+        if (p != null) {
+          List<geocode.Placemark> placemark =
+              await geocode.placemarkFromCoordinates(p.latitude, p.longitude);
+          return Location(
+            lat: p.latitude,
+            lng: p.longitude,
+            address: placemark.first.toString(),
+          );
+        }
 
         return Future.error('DENIED');
       }
@@ -39,10 +49,43 @@ class LocationService {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
-    Position position = await Geolocator.getCurrentPosition();
-    return position;
+    Position p = await Geolocator.getCurrentPosition();
+    geocode.Placemark placemark =
+        (await geocode.placemarkFromCoordinates(p.latitude, p.longitude)).first;
+    return Location(
+      lat: p.latitude,
+      lng: p.longitude,
+      address: placemarkToAddress(placemark),
+    );
+  }
+
+  Future<Location> getLocationFromAddress(String address) async {
+    List<geocode.Location> locationList =
+        await geocode.locationFromAddress(address);
+    if (locationList.isEmpty) {
+      return Future.error('ADDRESS_NOT_FOUND');
+    }
+    geocode.Location l = locationList.first;
+    return Location(lat: l.latitude, lng: l.longitude, address: address);
   }
 
   Future<void> openLocationSettings() async =>
       await Geolocator.openLocationSettings();
+
+  String placemarkToAddress(geocode.Placemark placemark) {
+    bool check(String? s) {
+      if (s != null && s.isNotEmpty) {
+        return true;
+      }
+      return false;
+    }
+
+    String address = '';
+    if (check(placemark.name)) address += '${placemark.name}, ';
+    if (check(placemark.subLocality)) address += '${placemark.subLocality}, ';
+    if (check(placemark.locality)) address += '${placemark.locality}, ';
+    if (check(placemark.country)) address += '${placemark.country}, ';
+    if (check(placemark.postalCode)) address += '${placemark.postalCode}';
+    return address;
+  }
 }

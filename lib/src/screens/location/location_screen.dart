@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,7 @@ class _LocationScreenState extends State<LocationScreen>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<LocationProvider>().getLatLng();
+      context.read<LocationProvider>().getLocation();
     });
     super.initState();
   }
@@ -35,7 +36,7 @@ class _LocationScreenState extends State<LocationScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed &&
         context.read<LocationProvider>().state.denied()) {
-      context.read<LocationProvider>().getLatLng();
+      context.read<LocationProvider>().getLocation();
     }
     super.didChangeAppLifecycleState(state);
   }
@@ -85,7 +86,8 @@ class _LocationScreenState extends State<LocationScreen>
                     child: Column(
                       children: [
                         const SizedBox(height: 24.0),
-                        location.state.denied()
+                        location.state.denied() ||
+                                location.state.uninitialized()
                             ? const Icon(Icons.location_off_rounded, size: 40.0)
                             : Symbols.locationMark,
                         Padding(
@@ -98,7 +100,9 @@ class _LocationScreenState extends State<LocationScreen>
                                 ? _buildManual(location)
                                 : location.state.denied()
                                     ? _buildDenied(location)
-                                    : _buildDetecting(location)
+                                    : location.state.uninitialized()
+                                        ? _buildUninitialized(location)
+                                        : _buildDetecting(location),
                       ],
                     ),
                   );
@@ -148,7 +152,7 @@ class _LocationScreenState extends State<LocationScreen>
     );
   }
 
-  Shimmer _buildDetecting(LocationProvider location) {
+  Shimmer _buildDetecting(LocationProvider provider) {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
       highlightColor: Colors.grey.shade100,
@@ -163,56 +167,17 @@ class _LocationScreenState extends State<LocationScreen>
     );
   }
 
-  Column _buildManual(LocationProvider location) {
+  Column _buildDetected(LocationProvider provider) {
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: Text(
-              'L4, Jagdish Nagar, Varachha Surat, Gujarat, India, 395006 ',
-              style: Fonts.simText,
-              textAlign: TextAlign.center),
-        ),
-        const SizedBox(height: 16.0),
-        location.state.manual()
-            ? Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 22.0),
-                child: Column(
-                  children: [
-                    InputField(
-                      inputText: "Location*",
-                      hintText: "Enter your location",
-                      controller: locationController,
-                      keyboardType: TextInputType.multiline,
-                      expands: true,
-                      height: 80.0,
-                    ),
-                    Button(onPressed: () {}, buttonText: "Save Location"),
-                  ],
-                ),
-              )
-            : GestureDetector(
-                onTap: () => location.toManual(),
-                child: Text("Edit Location Manually",
-                    style: Fonts.simText.copyWith(color: Palette.link)),
-              ),
-      ],
-    );
-  }
-
-  Column _buildDetected(LocationProvider location) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: Text(
-              'L4, Jagdish Nagar, Varachha Surat, Gujarat, India, 395006 ',
-              style: Fonts.simText,
-              textAlign: TextAlign.center),
+          child: Text(provider.location!.address,
+              style: Fonts.simText, textAlign: TextAlign.center),
         ),
         const SizedBox(height: 16.0),
         GestureDetector(
-          onTap: () => location.toManual(),
+          onTap: () => provider.toManual(),
           child: Text("Edit Location Manually",
               style: Fonts.simText.copyWith(color: Palette.link)),
         ),
@@ -220,7 +185,66 @@ class _LocationScreenState extends State<LocationScreen>
     );
   }
 
-  Padding _buildDenied(LocationProvider location) {
+  Column _buildManual(LocationProvider provider) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          child: Text(provider.location!.address,
+              style: Fonts.simText, textAlign: TextAlign.center),
+        ),
+        const SizedBox(height: 16.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 22.0),
+          child: Column(
+            children: [
+              InputField(
+                inputText: "Location*",
+                hintText: "Enter your location (Please be Precise as possible)",
+                controller: locationController,
+                keyboardType: TextInputType.multiline,
+                expands: true,
+                height: 80.0,
+              ),
+              Button(
+                  onPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    if (locationController.text.isNotEmpty) {
+                      provider.getLocationFromAddress(locationController.text);
+                    }
+                  },
+                  buttonText: "Save Location"),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Padding _buildUninitialized(LocationProvider provider) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22.0),
+      child: Column(
+        children: [
+          RichText(
+            text: TextSpan(
+                text: 'No Location Found,',
+                style: Fonts.simText.copyWith(letterSpacing: -0.2),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: ' Try Again',
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () => provider.toManual(),
+                    style: Fonts.simText.copyWith(color: Palette.link),
+                  )
+                ]),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding _buildDenied(LocationProvider provider) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 22.0),
       child: Column(
@@ -233,9 +257,9 @@ class _LocationScreenState extends State<LocationScreen>
           const SizedBox(height: 20.0),
           Button(
             buttonText: 'Settings',
-            onPressed: () => location
+            onPressed: () => provider
                 .openLocationSettings()
-                .whenComplete(() => location.getLatLng()),
+                .whenComplete(() => provider.getLocation()),
           )
         ],
       ),
